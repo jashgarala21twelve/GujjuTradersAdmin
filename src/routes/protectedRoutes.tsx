@@ -1,0 +1,85 @@
+import User from '@/pages/user';
+import { lazy } from 'react';
+import { RouteObject } from 'react-router-dom';
+
+// Dashboard
+const DashBoard = lazy(() => import('@/pages/dashboard'));
+
+// Users Management
+const Users = lazy(() => import('@/pages/users'));
+
+// Coupons Management
+const Coupons = lazy(() => import('@/pages/coupons'));
+
+// Referrals
+const Referrals = lazy(() => import('@/pages/referrals'));
+
+// News Management
+const News = lazy(() => import('@/pages/news'));
+const NewsCategory = lazy(() => import('@/pages/newscategory'));
+
+// FAQ Management
+const FAQ = lazy(() => import('@/pages/faq'));
+
+// Trade Tips
+const TradeTips = lazy(() => import('@/pages/tradetips'));
+
+// Social Links
+const SocialLinks = lazy(() => import('@/pages/sociallinks'));
+
+// Media Assets
+// const Banners = lazy(() => import('@/pages/mediaassets'));
+
+// Subscription Plans
+const Plans = lazy(() => import('@/pages/plans'));
+
+const Settings = lazy(() => import('@/pages/settings'));
+
+// Define Routes
+// const ProtectedRoutes: RouteObject[] = [
+//   { path: '/', element: <DashBoard /> },
+//   { path: '/completed-jobs', element: <Jobs /> },
+//   { path: '/jobs', element: <Jobs /> },
+//   { path: '/jobs/empty', element: <EmptyJobs /> },
+//   { path: '/jobs/completed', element: <CompletedJobs /> },
+//   { path: '/jobs/search', element: <SearchJobs /> },
+//   { path: '/cabhistory', element: <CabHistory /> },
+//   { path: '/spareparts', element: <SpareParts /> },
+//   { path: '/inventory/used', element: <UsedSpareParts /> },
+//   { path: '/inventory/new', element: <NewSpareParts /> },
+//   { path: '/inventory/return', element: <SparePartsReturn /> },
+//   { path: '/inventory/purchase', element: <SparePartsPurchase /> },
+//   { path: '/inventory/purchase-return', element: <PurchaseReturn /> },
+//   { path: '/memo', element: <Memo /> },
+//   { path: '/cars', element: <Cars /> },
+//   { path: '/accounts', element: <Accounts /> },
+//   { path: '/accounts/statements', element: <AccountStatements /> },
+//   { path: '/accounts/ledger', element: <GeneralLedger /> },
+//   { path: '/accounts/supplier-payment', element: <SupplierPayment /> },
+//   { path: '/accounts/invoices', element: <PostingInvoices /> },
+//   { path: '/accounts/expenses', element: <UserExpenses /> },
+//   { path: '/hrms/employee', element: <AddEmployee /> },
+//   { path: '/hrms/payroll', element: <GeneralPayroll /> },
+//   { path: '/hrms/announcements', element: <Announcements /> },
+//   { path: '/hrms/holidays', element: <Holidays /> },
+//   { path: '/customers', element: <Customers /> },
+//   { path: '/reports', element: <Reports /> },
+//   { path: '/settings', element: <Settings /> },
+// ];
+const ProtectedRoutes: RouteObject[] = [
+  { path: '/', element: <DashBoard /> },
+  { path: '/users', element: <Users /> },
+  { path: '/users/:userId', element: <User /> },
+  { path: '/coupons', element: <Coupons /> },
+  { path: '/referrals', element: <Referrals /> },
+  { path: '/news', element: <News /> },
+  { path: '/news/category', element: <NewsCategory /> },
+  { path: '/faq', element: <FAQ /> },
+  { path: '/tradetips', element: <TradeTips /> },
+  { path: '/social-links', element: <SocialLinks /> },
+  // { path: '/media-assets', element: <MediaAssets /> },
+  { path: '/plans', element: <Plans /> },
+  { path: '/settings', element: <Settings /> },
+];
+
+export default ProtectedRoutes;
