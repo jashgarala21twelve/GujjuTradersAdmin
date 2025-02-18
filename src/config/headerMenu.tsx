@@ -46,15 +46,16 @@ import {
 
 export const menuItems = [
   { name: 'dashboard', icon: Home, path: '/' },
+  { name: 'tradetips', icon: Lightbulb, path: '/tradetips' },
   { name: 'users', icon: Users, path: '/users' },
   { name: 'coupons', icon: Tag, path: '/coupons' },
   { name: 'referrals', icon: Gift, path: '/referrals' },
   { name: 'news', icon: Newspaper, path: '/news' },
   // { name: 'News Category', icon: ListChecks, path: '/news/category' },
   { name: 'faq', icon: HelpCircle, path: '/faq' },
-  { name: 'tradetips', icon: Lightbulb, path: '/tradetips' },
+
   { name: 'social-links', icon: Share2, path: '/social-links' },
-// { name: 'Media Assets', icon: Image, path: '/media-assets' },
+  // { name: 'Media Assets', icon: Image, path: '/media-assets' },
   { name: 'plans', icon: CreditCard, path: '/plans' },
   { name: 'settings', icon: Settings, path: '/settings' },
 ];

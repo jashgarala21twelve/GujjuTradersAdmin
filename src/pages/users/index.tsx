@@ -1,3 +1,4 @@
+import AlertDialogComponent from '@/components/alertDialog/alertConfirmDialog';
 import DynamicDataTable from '@/components/datatable/datatable';
 import { CircleLoading } from '@/components/loader';
 import Loader from '@/components/loader/loader';
@@ -6,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUsers } from '@/hooks/api/users/useUsers';
+import { ACCOUNT_STATUS } from '@/utils/constants';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, Eye } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -259,6 +261,8 @@ const Users = () => {
       };
     });
   };
+  const [isInactiveUserAlertOpen, setIsInactiveUserAlertOpen] = useState(false);
+  const [isActiveUserAlertOpen, setActiveUserAlertOpen] = useState(false);
   const columns: ColumnDef[] = [
     {
       accessorKey: '_id',
@@ -330,14 +334,23 @@ const Users = () => {
         const user = row.original;
         return (
           <div className="flex w-full items-center justify-center space-x-3">
-            {/* <Button variant="outline" size="sm" onClick={() => {}}>
-              Edit
-            </Button> */}
             <Link to={`/users/${user._id}`}>View</Link>
 
-            <Button variant="destructive" size="sm" onClick={() => {}}>
-              Delete
-            </Button>
+            {row.getValue('account_status') === ACCOUNT_STATUS.ACTIVE ? (
+              <Button
+                variant={'destructive'}
+                onClick={() => setIsInactiveUserAlertOpen(true)}
+              >
+                InActive
+              </Button>
+            ) : (
+              <Button
+                variant={'default'}
+                onClick={() => setActiveUserAlertOpen(true)}
+              >
+                Activate
+              </Button>
+            )}
           </div>
         );
       },
@@ -399,6 +412,26 @@ const Users = () => {
           />
         )}
       </div>
+      <AlertDialogComponent
+        title="Are you sure you want Active this User?"
+        description=""
+        confirmText="Activate User"
+        cancelText="Cancel"
+        onConfirm={() => {}}
+        confirmButtonClass="bg-primary  hover:bg-primary-600"
+        open={isActiveUserAlertOpen}
+        setOpen={setActiveUserAlertOpen}
+      />
+      <AlertDialogComponent
+        title="Are you sure you want In Active this User?"
+        description=""
+        confirmText="InActive User"
+        cancelText="Cancel"
+        onConfirm={() => {}}
+        confirmButtonClass="bg-destructive text-white hover:bg-red-600"
+        open={isInactiveUserAlertOpen}
+        setOpen={setIsInactiveUserAlertOpen}
+      />
     </div>
   );
 };

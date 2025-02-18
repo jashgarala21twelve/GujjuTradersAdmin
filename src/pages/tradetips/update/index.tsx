@@ -1,12 +1,12 @@
 import PageTitle from '@/components/pageTitle';
 import React from 'react';
 
-const News = () => {
+const UpdateTradeTip = () => {
   return (
     <div>
-      <PageTitle title="News" />
+      <PageTitle title="Update Trade Tip" />
     </div>
   );
 };
 
-export default News;
+export default UpdateTradeTip;

@@ -8,3 +8,17 @@ export const Model = {
   Customer: 'Customer',
   Memo: 'Memo',
 };
+export const USER_TYPE = {
+  ADMIN: 0,
+  USER: 1,
+} as const;
+export const ACCOUNT_STATUS = {
+  DELETED: 0,
+  ACTIVE: 1,
+  DEACTIVATED: 2,
+} as const;
+export const SUBSCRIPTION_DURATION = {
+  WEEKLY: 'Weekly',
+  MONTHLY: 'Monthly',
+  YEARLY: 'Yearly',
+} as const;

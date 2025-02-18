@@ -306,10 +306,16 @@ export const sidebarMenus = {
   tradetips: [
     {
       key: 'tradetips',
-      name: 'Manage Trade Tips',
+      name: 'Trade Tips DashBoard',
       path: '/tradetips',
       icon: Lightbulb,
       title: 'Trade Tips',
+    },
+    {
+      key: 'tradetips-create',
+      name: 'Create Trade Tip',
+      path: '/tradetips/create',
+      icon: Lightbulb,
     },
   ],
   sociallinks: [

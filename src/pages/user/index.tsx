@@ -38,12 +38,20 @@ const User: FC = () => {
   }
 
   if (error) {
-    return <div>Error loading user data!</div>;
+    return (
+      <div>
+        <h1 className="text-2xl">{error.message}</h1>
+      </div>
+    );
   }
 
-  const userData: UserResponse = data?.data;
+  const userData: UserResponse = data?.data || null;
 
-  return (
+  return !userData ? (
+    <div>
+      <h1 className="text-2xl">User Not Found</h1>
+    </div>
+  ) : (
     <div className="">
       <PageTitle title="User Profile" />
 
@@ -54,7 +62,9 @@ const User: FC = () => {
             <div className="flex items-center space-x-4">
               <Avatar>
                 <AvatarImage src={userData?.profile_image} />
-                <AvatarFallback>{userData?.full_name[0].toUpperCase()}</AvatarFallback>
+                <AvatarFallback>
+                  {userData?.full_name[0].toUpperCase()}
+                </AvatarFallback>
               </Avatar>
               <div>
                 <div className="text-xl font-semibold">

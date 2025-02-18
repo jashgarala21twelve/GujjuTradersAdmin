@@ -8,8 +8,8 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/alert-dialog';
+import { Dispatch, ReactNode, SetStateAction } from 'react';
 
 interface AlertDialogProps {
   title: string;
@@ -17,26 +17,27 @@ interface AlertDialogProps {
   confirmText?: string;
   cancelText?: string;
   onConfirm: () => void;
-  triggerText: string;
-  variant?: "default" | "destructive" | "outline";
   confirmButtonClass?: string;
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  // children: ReactNode;
 }
 
 const AlertDialogComponent = ({
   title,
   description,
-  confirmText = "Confirm",
-  cancelText = "Cancel",
+  confirmText = 'Confirm',
+  cancelText = 'Cancel',
   onConfirm,
-  triggerText,
-  variant = "default",
-  confirmButtonClass = "bg-red-600 text-white hover:bg-red-700", // Default style
-}: AlertDialogProps) => {
+  open = false,
+  setOpen,
+  confirmButtonClass = 'bg-red-600 text-white hover:bg-red-700',
+}: // children, // Default style
+AlertDialogProps) => {
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant={variant}>{triggerText}</Button>
-      </AlertDialogTrigger>
+    <AlertDialog open={open} onOpenChange={value => setOpen(value)}>
+      {/* <AlertDialogTrigger asChild>{children}</AlertDialogTrigger> */}
+
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
