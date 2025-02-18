@@ -4,7 +4,7 @@ import {
 } from '@/components/toast/errorToast';
 import { BASE_API_URL } from '@/utils/constants';
 import { getToken } from '@/utils/sessionStorage';
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import Toast from '@/components/toast/commonToast';
 
 const api = axios.create({
@@ -35,25 +35,30 @@ api.interceptors.response.use(
 );
 
 export const axiosRequestWrapper = async <T>(
-  requestFn: (...args: any[]) => Promise<{ data: T }>,
-  ...args: any[]
+  requestFn: (...args: unknown[]) => Promise<AxiosResponse<T>>,
+  ...args: unknown[]
 ): Promise<T> => {
   try {
     const response = await requestFn(...args);
     return response.data;
   } catch (error) {
     let errorMessage = 'An unexpected error occurred';
-    let statusCode;
-    let endpoint;
+    let statusCode: number | undefined;
+    let endpoint: string | undefined;
 
     if (error instanceof AxiosError) {
       statusCode = error.response?.status;
-      errorMessage = error.response?.data?.message || error.message;
-      endpoint = error.config?.url; // Get the endpoint
+      errorMessage =
+        (error.response?.data as { message?: string })?.message ||
+        error.message;
+      endpoint = error.config?.url;
     }
+
     Toast('destructive', errorMessage, '', 5000);
-    // showApiErrorToast(errorMessage, statusCode, endpoint);
-    throw error; // Rethrow error for further handling
+    throw error;
   }
 };
+
+// Type for the Toast function (add this if you don't have it defined elsewhere)
+
 export default api;
