@@ -1,8 +1,8 @@
-import { faker } from "@faker-js/faker";
-export const convertToFormData = (data) => {
+import { faker } from '@faker-js/faker';
+export const convertToFormData = data => {
   const formData = new FormData();
 
-  Object.keys(data).forEach((key) => {
+  Object.keys(data).forEach(key => {
     if (Array.isArray(data[key])) {
       // Handle arrays (e.g., multiple files)
       data[key].forEach((item, index) => {
@@ -11,7 +11,7 @@ export const convertToFormData = (data) => {
     } else if (data[key] instanceof File) {
       // Handle File objects
       formData.append(key, data[key]);
-    } else if (typeof data[key] === "object" && data[key] !== null) {
+    } else if (typeof data[key] === 'object' && data[key] !== null) {
       // Convert nested objects to JSON string
       formData.append(key, JSON.stringify(data[key]));
     } else {
@@ -23,8 +23,8 @@ export const convertToFormData = (data) => {
   return formData;
 };
 
-export const generateFakePayments = (count: number): Payment[] => {
-  const statuses = ["pending", "processing", "success", "failed"];
+export const generateFakePayments = (count: number) => {
+  const statuses = ['pending', 'processing', 'success', 'failed'];
 
   return Array.from({ length: count }, (_, i) => ({
     id: `id-${i + 1}`, // Unique ID using a simple counter
@@ -33,7 +33,5 @@ export const generateFakePayments = (count: number): Payment[] => {
     email: `user${i + 1}@example.com`, // Sequential fake email addresses
   }));
 };
-
-
 
 // Generate 50 fake records

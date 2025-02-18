@@ -4,7 +4,7 @@ import {
 } from '@/components/toast/errorToast';
 import { BASE_API_URL } from '@/utils/constants';
 import { getToken } from '@/utils/sessionStorage';
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import Toast from '@/components/toast/commonToast';
 
 const api = axios.create({
@@ -34,27 +34,31 @@ api.interceptors.response.use(
   }
 );
 
-export const axiosRequestWrapper = async <T>(
-  requestFn: (...args: unknown[]) => Promise<AxiosResponse<T>>,
-  ...args: unknown[]
-): Promise<T> => {
+export const request = async (
+  method: 'get' | 'post' | 'put' | 'delete',
+  url: string,
+  data?: any,
+  config?: AxiosRequestConfig
+) => {
   try {
-    const response = await requestFn(...args);
+    const response: AxiosResponse = await api.request({
+      method,
+      url,
+      data,
+      ...config,
+    });
     return response.data;
   } catch (error) {
     let errorMessage = 'An unexpected error occurred';
-    let statusCode: number | undefined;
-    let endpoint: string | undefined;
-
-    if (error instanceof AxiosError) {
-      statusCode = error.response?.status;
+    if (axios.isAxiosError(error) && error.response) {
       errorMessage =
-        (error.response?.data as { message?: string })?.message ||
-        error.message;
-      endpoint = error.config?.url;
+        (error.response.data as { message?: string })?.message || error.message;
     }
 
-    Toast('destructive', errorMessage, '', 5000);
+    if (typeof Toast === 'function') {
+      Toast('destructive', errorMessage, '', 5000);
+    }
+
     throw error;
   }
 };

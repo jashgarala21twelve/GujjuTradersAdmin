@@ -1,11 +1,12 @@
-import { ChangePasswordApi } from "@/api/auth";
+
 import Toast from "@/components/toast/commonToast";
 import { useMutation } from "@tanstack/react-query";
 import { handleApiError } from "../useApiError";
+import { changePasswordApi } from "@/api/auth";
 
 export const useChangePasswordMutation = (successHandler) => {
   return useMutation({
-    mutationFn: ChangePasswordApi,
+    mutationFn: changePasswordApi,
     onSuccess: (data) => {
       if (data?.success == false) {
         handleApiError(data);

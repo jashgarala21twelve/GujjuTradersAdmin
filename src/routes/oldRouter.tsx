@@ -2,34 +2,31 @@
 // import ProtectedRoute from "@/router/components/protected-route";
 // import { usePermissionRoutes } from "@/router/hooks";
 
-import { Navigate, type RouteObject, createBrowserRouter, useNavigate } from "react-router";
-import { RouterProvider } from "react-router/dom";
+import { Navigate, type RouteObject, createBrowserRouter } from 'react-router';
+import { RouterProvider } from 'react-router/dom';
 // import type { AppRouteObject } from "#/router";
 
-import { ERROR_ROUTE } from "./errorRoutes";
-import DashboardLayout from "@/layouts/dashboard";
-import ProtectedRoutes from "./protectedRoutes";
-import { SidebarProvider as ShadcnSidebarProvider } from "@/components/ui/sidebar";
+import { ERROR_ROUTE } from './errorRoutes';
+import DashboardLayout from '@/layouts/dashboard';
+import ProtectedRoutes from './protectedRoutes';
+import { SidebarProvider as ShadcnSidebarProvider } from '@/components/ui/sidebar';
 
-import PublicRoutes from "./publicRoutes";
-import ProtectedRoute from "./protectedRoute";
-import { AuthProvider, useAuth } from "@/context/authContext";
-import { useEffect } from "react";
+import PublicRoutes from './publicRoutes';
+import ProtectedRoute from './protectedRoute';
 
 // const { VITE_APP_HOMEPAGE: HOMEPAGE } = import.meta.env;
 
 const NO_MATCHED_ROUTE = {
-  path: "*",
+  path: '*',
   element: <Navigate to="/404" replace />,
 };
 
 export default function Router() {
   //   const permissionRoutes = usePermissionRoutes();
   //   console.log(permissionRoutes, "permissionRoutes");
- 
 
   const PROTECTED_ROUTE = {
-    path: "/",
+    path: '/',
     element: (
       <ProtectedRoute>
         <ShadcnSidebarProvider>
@@ -47,7 +44,7 @@ export default function Router() {
     NO_MATCHED_ROUTE,
   ] as RouteObject[];
 
-  console.log(routes, "routes");
+  console.log(routes, 'routes');
   const router = createBrowserRouter(routes);
 
   return <RouterProvider router={router} />;

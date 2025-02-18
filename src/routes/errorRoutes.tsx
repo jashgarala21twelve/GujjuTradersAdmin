@@ -1,5 +1,5 @@
-import { Suspense, lazy } from "react";
-import { Outlet, RouteObject } from "react-router";
+import { lazy } from 'react';
+import { Outlet, RouteObject } from 'react-router';
 
 // import { CircleLoading } from "@/components/loading";
 // import SimpleLayout from "@/layouts/simple";
@@ -8,9 +8,9 @@ import { Outlet, RouteObject } from "react-router";
 
 // import type { AppRouteObject } from "#/router";
 
-const Page403 = lazy(() => import("@/pages/error/Page403"));
-const Page404 = lazy(() => import("@/pages/error/Page404"));
-const Page500 = lazy(() => import("@/pages/error/Page500"));
+const Page403 = lazy(() => import('@/pages/error/Page403'));
+const Page404 = lazy(() => import('@/pages/error/Page404'));
+const Page500 = lazy(() => import('@/pages/error/Page500'));
 
 /**
  * error routes
@@ -24,9 +24,9 @@ export const ErrorRoutes: RouteObject[] = [
       </>
     ),
     children: [
-      { path: "403", element: <Page403 /> },
-      { path: "404", element: <Page404 /> },
-      { path: "500", element: <Page500 /> },
+      { path: '403', element: <Page403 /> },
+      { path: '404', element: <Page404 /> },
+      { path: '500', element: <Page500 /> },
     ],
   },
 ];

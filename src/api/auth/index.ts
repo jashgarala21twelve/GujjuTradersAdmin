@@ -1,5 +1,5 @@
 import { BASE_API_URL } from '@/utils/constants';
-import api, { axiosRequestWrapper } from '../api';
+import api, { request } from '../api';
 
 export const BASE_AUTH_ROUTE = BASE_API_URL + '/auth';
 
@@ -7,17 +7,31 @@ const AUTH_ROUTES = {
   LOGIN: BASE_AUTH_ROUTE + '/login',
   LOGOUT: BASE_AUTH_ROUTE + '/logout',
 };
+// // Login API Call
+// export const loginApi = async (data: Record<string, any>) => {
+//   return axiosRequestWrapper(api.post, AUTH_ROUTES.LOGIN, data);
+// };
+
+// //Logout Api
+// export const logoutApi = async () => {
+//   return axiosRequestWrapper(api.get, AUTH_ROUTES.LOGOUT);
+// };
+
+// //Change Password Api
+// export const ChangePasswordApi = async (data: Record<string, any>) => {
+//   return axiosRequestWrapper(api.post, '/change_password', data);
+// };
 // Login API Call
 export const loginApi = async (data: Record<string, any>) => {
-  return axiosRequestWrapper(api.post, AUTH_ROUTES.LOGIN, data);
+  return request('post', AUTH_ROUTES.LOGIN, data);
 };
 
-//Logout Api
+// Logout API Call
 export const logoutApi = async () => {
-  return axiosRequestWrapper(api.get, AUTH_ROUTES.LOGOUT);
+  return request('get', AUTH_ROUTES.LOGOUT);
 };
 
-//Change Password Api
-export const ChangePasswordApi = async (data: Record<string, any>) => {
-  return axiosRequestWrapper(api.post, '/change_password', data);
+// Change Password API Call
+export const changePasswordApi = async (data: Record<string, any>) => {
+  return request('post', '/change_password', data);
 };
