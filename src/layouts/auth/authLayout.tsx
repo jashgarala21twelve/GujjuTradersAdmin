@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { m } from 'framer-motion';
-import ChallengerLogo from '../../assets/challengerlogo.png';
+import GujjuTraderLogo from '../../assets/gujjutradetslogo.png';
 import GradientBackground from './gradientBackground';
 import { ModeToggle } from '@/components/modleToggle';
 
@@ -11,9 +11,9 @@ const AuthLayout = () => {
       <div className="hidden md:flex w-1/2 h-screen relative items-center justify-center overflow-hidden">
         <GradientBackground />
         <m.img
-          src={''}
+          src={GujjuTraderLogo}
           alt="Gujju Traders"
-          className="z-10 w-60 h-20 rounded-xl"
+          className="z-10 w-100 h-80 rounded-xl"
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
