@@ -22,3 +22,14 @@ export const SUBSCRIPTION_DURATION = {
   MONTHLY: 'Monthly',
   YEARLY: 'Yearly',
 } as const;
+
+export const TRADE_TYPE = {
+  BUY: 'BUY',
+  SELL: 'SELL',
+} as const;
+
+export const TRADE_TERM = {
+  SHORT_TERM: '1',
+  MEDIUM_TERM: '2',
+  LONG_TERM: '3',
+} as const;

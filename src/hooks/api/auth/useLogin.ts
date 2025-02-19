@@ -21,7 +21,7 @@ export const useLoginMutation = onSuccessHandler => {
         );
         return;
       }
-      const payload = data?.data
+      const payload = data?.data;
       const { accessToken, ...loginData } = payload;
       if (accessToken) {
         onSuccessHandler(accessToken, loginData);

@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { debounce } from 'lodash';
+import React, { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -26,68 +25,53 @@ import {
   ChevronsLeft,
   ChevronsRight,
   RefreshCcw,
-  Loader2,
 } from 'lucide-react';
 import {
   useRefetchStockList,
   useStockList,
 } from '@/hooks/api/stocks/useStocks';
-import { useNavigate } from 'react-router-dom';
 
 const StockTable = () => {
   const [data, setData] = useState([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [searchInput, setSearchInput] = useState(''); // For immediate input update
-  const [search, setSearch] = useState(''); // For debounced API calls
+  const [search, setSearch] = useState('');
   const [size] = useState(20);
   const [sortField, setSortField] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
   const [exactSearch, setExactSearch] = useState(false);
   const [exchange, setExchange] = useState('ALL');
-  const navigate = useNavigate();
-  const {
-    data: stocksResponse,
-    refetch,
-    isLoading: isListLoading,
-  } = useStockList({
+
+  //   const fetchData = async () => {
+  //     try {
+  //       //   const response = await fetch(
+  //       //     `http://localhost:5002/stocks?page=${page}&size=${size}&search=${search}&sortField=${sortField}&sortOrder=${sortOrder}&exactSearch=${exactSearch}&exchange=${exchange}`
+  //       //   );
+  //       const response = await fetch(
+  //         `http://localhost:5000/gujjutraders/admin/v1/stocks/list?page=${page}&size=${size}&search=${search}&sortField=${sortField}&sortOrder=${sortOrder}&exactSearch=${exactSearch}&exchange=${exchange}`
+  //       );
+  //       const { data: result } = await response.json();
+  //       setData(result.data);
+  //       setTotal(result.total);
+  //     } catch (error) {
+  //       console.error('Error fetching data:', error);
+  //     }
+  //   };
+
+  const { data: stocksResponse, refetch } = useStockList({
     page,
     size,
-    search, // Using debounced search value
+    search,
     sortField,
     sortOrder,
     exactSearch,
     exchange,
   });
-
   const {
     mutate,
     isSuccess: isRefetchStockListSuccess,
-    isPending: isRefetching,
+    isPending,
   } = useRefetchStockList();
-
-  // Debounced search function
-  const debouncedSearch = useCallback(
-    debounce(value => {
-      setSearch(value);
-      setPage(1); // Reset to first page on new search
-    }, 500), // 500ms delay
-    []
-  );
-
-  // Handle input change
-  const handleSearchInput = e => {
-    const value = e.target.value;
-    setSearchInput(value); // Update visible input immediately
-    debouncedSearch(value); // Debounce the actual search
-  };
-
-  // Handle form submission
-  const handleSearch = e => {
-    e.preventDefault();
-    setSearch(searchInput); // Immediately apply the current input value
-    setPage(1);
-  };
 
   useEffect(() => {
     if (stocksResponse) {
@@ -96,12 +80,15 @@ const StockTable = () => {
       setTotal(Data.total);
     }
   }, [stocksResponse]);
-
   useEffect(() => {
-    return () => {
-      debouncedSearch.cancel(); // Cleanup debounce on unmount
-    };
-  }, [debouncedSearch]);
+    refetch();
+  }, [page, search, sortField, sortOrder, exactSearch, exchange]);
+
+  const handleSearch = e => {
+    setPage(1);
+    e.preventDefault();
+    // fetchData();
+  };
 
   const handleSort = field => {
     const isAsc = sortField === field && sortOrder === 'asc';
@@ -121,19 +108,9 @@ const StockTable = () => {
           <Button
             className="bg-success hover:bg-green-600 text-white"
             onClick={() => mutate()}
-            disabled={isRefetching}
           >
-            {isRefetching ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Refetching...
-              </>
-            ) : (
-              <>
-                Refetch Stocks
-                <RefreshCcw className="ml-2 h-4 w-4" />
-              </>
-            )}
+            Refetch Stocks
+            <RefreshCcw />
           </Button>
         </div>
       </CardHeader>
@@ -141,16 +118,18 @@ const StockTable = () => {
         <div className="space-y-4">
           {/* Search and Filters */}
           <div className="flex flex-col space-y-4 md:flex-row md:space-x-4 md:space-y-0">
+            {/* Search Form */}
             <form onSubmit={handleSearch} className="flex flex-1 space-x-2">
               <Input
                 placeholder="Search by Symbol or Name"
-                value={searchInput}
-                onChange={handleSearchInput}
+                value={search}
+                onChange={e => setSearch(e.target.value)}
                 className="flex-1"
               />
               <Button type="submit">Search</Button>
             </form>
 
+            {/* Exact Search */}
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="exactSearch"
@@ -162,6 +141,7 @@ const StockTable = () => {
               </label>
             </div>
 
+            {/* Exchange Select */}
             <Select value={exchange} onValueChange={setExchange}>
               <SelectTrigger className="w-40">
                 <SelectValue placeholder="Select Exchange" />
@@ -175,7 +155,7 @@ const StockTable = () => {
           </div>
 
           {/* Table */}
-          <div className="rounded-md border relative">
+          <div className="rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -232,30 +212,15 @@ const StockTable = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {isListLoading || isRefetching ? (
-                  <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center">
-                      <div className="flex items-center justify-center">
-                        <Loader2 className="h-6 w-6 animate-spin mr-2" />
-                        Loading stocks...
-                      </div>
-                    </TableCell>
+                {data.map((item, index) => (
+                  <TableRow key={item.token}>
+                    <TableCell>{item.token}</TableCell>
+                    <TableCell>{item.symbol}</TableCell>
+                    <TableCell>{item.name}</TableCell>
+                    <TableCell>{item.instrumenttype}</TableCell>
+                    <TableCell>{item.exch_seg}</TableCell>
                   </TableRow>
-                ) : (
-                  data.map(item => (
-                    <TableRow
-                      key={item.token}
-                      className="cursor-pointer hover:bg-secondary"
-                      onClick={() => navigate(`/tradetips/create/${item.symbol}`)}
-                    >
-                      <TableCell>{item.token}</TableCell>
-                      <TableCell>{item.symbol}</TableCell>
-                      <TableCell>{item.name}</TableCell>
-                      <TableCell>{item.instrumenttype}</TableCell>
-                      <TableCell>{item.exch_seg}</TableCell>
-                    </TableRow>
-                  ))
-                )}
+                ))}
               </TableBody>
             </Table>
           </div>

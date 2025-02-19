@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { debounce } from 'lodash';
+import React, { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -32,20 +31,18 @@ import {
   useRefetchStockList,
   useStockList,
 } from '@/hooks/api/stocks/useStocks';
-import { useNavigate } from 'react-router-dom';
 
 const StockTable = () => {
   const [data, setData] = useState([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [searchInput, setSearchInput] = useState(''); // For immediate input update
-  const [search, setSearch] = useState(''); // For debounced API calls
+  const [search, setSearch] = useState('');
   const [size] = useState(20);
   const [sortField, setSortField] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
   const [exactSearch, setExactSearch] = useState(false);
   const [exchange, setExchange] = useState('ALL');
-  const navigate = useNavigate();
+
   const {
     data: stocksResponse,
     refetch,
@@ -53,7 +50,7 @@ const StockTable = () => {
   } = useStockList({
     page,
     size,
-    search, // Using debounced search value
+    search,
     sortField,
     sortOrder,
     exactSearch,
@@ -66,29 +63,6 @@ const StockTable = () => {
     isPending: isRefetching,
   } = useRefetchStockList();
 
-  // Debounced search function
-  const debouncedSearch = useCallback(
-    debounce(value => {
-      setSearch(value);
-      setPage(1); // Reset to first page on new search
-    }, 500), // 500ms delay
-    []
-  );
-
-  // Handle input change
-  const handleSearchInput = e => {
-    const value = e.target.value;
-    setSearchInput(value); // Update visible input immediately
-    debouncedSearch(value); // Debounce the actual search
-  };
-
-  // Handle form submission
-  const handleSearch = e => {
-    e.preventDefault();
-    setSearch(searchInput); // Immediately apply the current input value
-    setPage(1);
-  };
-
   useEffect(() => {
     if (stocksResponse) {
       const { data: Data } = stocksResponse;
@@ -98,10 +72,13 @@ const StockTable = () => {
   }, [stocksResponse]);
 
   useEffect(() => {
-    return () => {
-      debouncedSearch.cancel(); // Cleanup debounce on unmount
-    };
-  }, [debouncedSearch]);
+    refetch();
+  }, [page, search, sortField, sortOrder, exactSearch, exchange]);
+
+  const handleSearch = e => {
+    setPage(1);
+    e.preventDefault();
+  };
 
   const handleSort = field => {
     const isAsc = sortField === field && sortOrder === 'asc';
@@ -144,11 +121,14 @@ const StockTable = () => {
             <form onSubmit={handleSearch} className="flex flex-1 space-x-2">
               <Input
                 placeholder="Search by Symbol or Name"
-                value={searchInput}
-                onChange={handleSearchInput}
+                value={search}
+                onChange={e => setSearch(e.target.value)}
                 className="flex-1"
+                disabled={isListLoading || isRefetching}
               />
-              <Button type="submit">Search</Button>
+              <Button type="submit" disabled={isListLoading || isRefetching}>
+                Search
+              </Button>
             </form>
 
             <div className="flex items-center space-x-2">
@@ -156,13 +136,18 @@ const StockTable = () => {
                 id="exactSearch"
                 checked={exactSearch}
                 onCheckedChange={() => setExactSearch(prev => !prev)}
+                disabled={isListLoading || isRefetching}
               />
               <label htmlFor="exactSearch" className="text-sm">
                 Exact Search
               </label>
             </div>
 
-            <Select value={exchange} onValueChange={setExchange}>
+            <Select
+              value={exchange}
+              onValueChange={setExchange}
+              disabled={isListLoading || isRefetching}
+            >
               <SelectTrigger className="w-40">
                 <SelectValue placeholder="Select Exchange" />
               </SelectTrigger>
@@ -184,6 +169,7 @@ const StockTable = () => {
                       variant="ghost"
                       onClick={() => handleSort('token')}
                       className="h-8 p-0"
+                      disabled={isListLoading || isRefetching}
                     >
                       Token
                       <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -194,6 +180,7 @@ const StockTable = () => {
                       variant="ghost"
                       onClick={() => handleSort('symbol')}
                       className="h-8 p-0"
+                      disabled={isListLoading || isRefetching}
                     >
                       Symbol
                       <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -204,6 +191,7 @@ const StockTable = () => {
                       variant="ghost"
                       onClick={() => handleSort('name')}
                       className="h-8 p-0"
+                      disabled={isListLoading || isRefetching}
                     >
                       Name
                       <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -214,6 +202,7 @@ const StockTable = () => {
                       variant="ghost"
                       onClick={() => handleSort('instrumenttype')}
                       className="h-8 p-0"
+                      disabled={isListLoading || isRefetching}
                     >
                       Instrument Type
                       <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -224,6 +213,7 @@ const StockTable = () => {
                       variant="ghost"
                       onClick={() => handleSort('exch_seg')}
                       className="h-8 p-0"
+                      disabled={isListLoading || isRefetching}
                     >
                       Exchange
                       <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -243,11 +233,7 @@ const StockTable = () => {
                   </TableRow>
                 ) : (
                   data.map(item => (
-                    <TableRow
-                      key={item.token}
-                      className="cursor-pointer hover:bg-secondary"
-                      onClick={() => navigate(`/tradetips/create/${item.symbol}`)}
-                    >
+                    <TableRow key={item.token}>
                       <TableCell>{item.token}</TableCell>
                       <TableCell>{item.symbol}</TableCell>
                       <TableCell>{item.name}</TableCell>
@@ -266,7 +252,7 @@ const StockTable = () => {
               variant="outline"
               size="icon"
               onClick={() => setPage(1)}
-              disabled={page === 1}
+              disabled={page === 1 || isListLoading || isRefetching}
             >
               <ChevronsLeft className="h-4 w-4" />
             </Button>
@@ -274,7 +260,7 @@ const StockTable = () => {
               variant="outline"
               size="icon"
               onClick={() => setPage(page - 1)}
-              disabled={page === 1}
+              disabled={page === 1 || isListLoading || isRefetching}
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -285,7 +271,7 @@ const StockTable = () => {
               variant="outline"
               size="icon"
               onClick={() => setPage(page + 1)}
-              disabled={page === totalPages}
+              disabled={page === totalPages || isListLoading || isRefetching}
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -293,7 +279,7 @@ const StockTable = () => {
               variant="outline"
               size="icon"
               onClick={() => setPage(totalPages)}
-              disabled={page === totalPages}
+              disabled={page === totalPages || isListLoading || isRefetching}
             >
               <ChevronsRight className="h-4 w-4" />
             </Button>

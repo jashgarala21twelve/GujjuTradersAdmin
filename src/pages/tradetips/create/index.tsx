@@ -3,7 +3,7 @@ import StockTable from '@/components/StockTable/index ';
 
 import React from 'react';
 
-const CreateTradeTip = () => {
+const TradeTipsStockTable = () => {
   return (
     <div>
       <PageTitle title="Stocks Table" />
@@ -13,4 +13,4 @@ const CreateTradeTip = () => {
   );
 };
 
-export default CreateTradeTip;
+export default TradeTipsStockTable;

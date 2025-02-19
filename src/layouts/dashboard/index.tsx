@@ -13,7 +13,7 @@ import { useAuth } from "@/context/authContext";
 const DashboardLayout = () => {
   useActiveMenu();
   return (
-    <div className="flex h-screen overflow-hidden flex-1  ">
+    <div className="flex h-screen overflow-hidden flex-1 fixed w-full ">
       <AppSidebar />
       <div className="flex flex-1 flex-col w-full h-screen overflow-hidden">
         <Header />

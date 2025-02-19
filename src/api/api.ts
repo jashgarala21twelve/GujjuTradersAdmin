@@ -49,7 +49,8 @@ export const request = async (
     });
     return response.data;
   } catch (error) {
-    let errorMessage = 'An unexpected error occurred';
+
+    let errorMessage = error.message||'An unexpected error occurred';
     if (axios.isAxiosError(error) && error.response) {
       errorMessage =
         (error.response.data as { message?: string })?.message || error.message;

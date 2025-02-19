@@ -23,7 +23,10 @@ const FAQ = lazy(() => import('@/pages/faq'));
 
 // Trade Tips
 const TradeTips = lazy(() => import('@/pages/tradetips'));
-const CreateTradeTip = lazy(() => import('@/pages/tradetips/create'));
+const TradeTipsStockTable = lazy(() => import('@/pages/tradetips/create'));
+const CreateTradeTip = lazy(
+  () => import('@/pages/tradetips/create/createById')
+);
 const UpdateTradeTip = lazy(() => import('@/pages/tradetips/update'));
 
 // Social Links
@@ -78,7 +81,8 @@ const ProtectedRoutes: RouteObject[] = [
   { path: '/news/category', element: <NewsCategory /> },
   { path: '/faq', element: <FAQ /> },
   { path: '/tradetips', element: <TradeTips /> },
-  { path: '/tradetips/create', element: <CreateTradeTip /> },
+  { path: '/tradetips/create', element: <TradeTipsStockTable /> },
+  { path: '/tradetips/create/:symbol', element: <CreateTradeTip /> },
   { path: '/tradetips/update/:id', element: <UpdateTradeTip /> },
   { path: '/social-links', element: <SocialLinks /> },
   // { path: '/media-assets', element: <MediaAssets /> },
