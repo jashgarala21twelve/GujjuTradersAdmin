@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker';
+
 export const convertToFormData = data => {
   const formData = new FormData();
 

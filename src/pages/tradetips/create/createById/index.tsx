@@ -19,6 +19,8 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import Toast from '@/components/toast/commonToast';
+import { useCreateTradeTip } from '@/hooks/api/tradetips/useTradeTips';
+import { convertToFormData } from '@/utils/helper';
 
 // Define Schema
 const tradeTipSchema = z.object({
@@ -37,7 +39,16 @@ const tradeTipSchema = z.object({
     .array(z.string().nonempty('Target is required'))
     .min(1, 'At least one target is required'),
   stockLogo: z.any().optional(),
+  deleteStockLogo: z.boolean().optional(),
+  planId: z.number(),
 });
+
+interface ImageState {
+  currentImage: string | null;
+  originalImage: string | null;
+  isModified: boolean;
+  file: File | null;
+}
 
 const CreateTradeTip = () => {
   const { symbol } = useParams();
@@ -46,6 +57,20 @@ const CreateTradeTip = () => {
     data: stockSymbolResponse,
     isPending,
   } = useGetStockBySymbol();
+  const onSuccessTradeTipCreation = data => {
+    console.log(data, 'data');
+    Toast('success', data?.message || 'Trade Tip Created Successfully');
+  };
+
+  const { mutate: createTradeTip } = useCreateTradeTip(
+    onSuccessTradeTipCreation
+  );
+  const [imageState, setImageState] = useState<ImageState>({
+    currentImage: null,
+    originalImage: null,
+    isModified: false,
+    file: null,
+  });
 
   const {
     register,
@@ -68,10 +93,12 @@ const CreateTradeTip = () => {
       stockName: '',
       exchange: '',
       duration: '',
-      targets: [''], // Initialize with one empty target
+      targets: [''],
+      deleteStockLogo: false,
+      planId: 1,
     },
   });
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  console.log(errors, 'errors');
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'targets',
@@ -82,33 +109,65 @@ const CreateTradeTip = () => {
   }, [symbol, mutate]);
 
   useEffect(() => {
-    if (stockSymbolResponse) {
-      setValue('stockId', stockSymbolResponse.data.token || '');
-      setValue('stockSymbol', stockSymbolResponse.data.symbol || '');
-      setValue('stockName', stockSymbolResponse.data.name || '');
-      setValue('exchange', stockSymbolResponse.data.exch_seg || '');
+    if (stockSymbolResponse?.data) {
+      const { token, symbol, name, exch_seg, stockLogo } =
+        stockSymbolResponse.data;
+      setValue('stockId', token || '');
+      setValue('stockSymbol', symbol || '');
+      setValue('stockName', name || '');
+      setValue('exchange', exch_seg || '');
+
+      if (stockLogo) {
+        setImageState({
+          currentImage: stockLogo,
+          originalImage: stockLogo,
+          isModified: false,
+          file: null,
+        });
+      }
     }
   }, [stockSymbolResponse, setValue]);
-  // if (Object.keys(errors).length > 0) {
-  //   console.log(errors, 'errors');
-  //   const firstErrorKey = Object.keys(errors)[0]; // Get first error field
-  //   const firstErrorMessage =
-  //     errors[firstErrorKey]?.message || errors[firstErrorKey]?.root?.message;
-  //   errors[firstErrorKey][0]?.message || 'Invalid input'; // Extract message
 
-  //   Toast('destructive', firstErrorKey, firstErrorMessage, 1000);
-  // }
-  const onSubmit = data => {
-    console.log('Form Data:', data);
-  };
-  const handleFileChange = e => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const newImageUrl = URL.createObjectURL(file);
+      setImageState(prev => ({
+        currentImage: newImageUrl,
+        originalImage: prev.originalImage,
+        isModified: true,
+        file: file,
+      }));
       setValue('stockLogo', file);
-      setPreviewImage(URL.createObjectURL(file));
+      setValue('deleteStockLogo', false);
     }
   };
 
+  const handleRemoveImage = () => {
+    setImageState({
+      currentImage: null,
+      originalImage: null,
+      isModified: false,
+      file: null,
+    });
+    setValue('deleteStockLogo', true);
+  };
+
+  const onSubmit = data => {
+    const formData = convertToFormData(data);
+    createTradeTip(formData);
+    console.log('Form Data:', data);
+    // Handle form submission
+  };
+  const onError = errors => {
+    console.log('Validation Errors:', errors);
+
+    // Extract the first error message dynamically
+    const firstError = Object.values(errors)?.[0]?.message;
+    if (firstError) {
+      Toast('destructive', firstError);
+    }
+  };
   if (isPending) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -119,14 +178,16 @@ const CreateTradeTip = () => {
 
   return (
     <div className="space-y-6">
-      {/* <PageTitle title={symbol || 'Not Found'} /> */}
-
       <Card>
         <CardHeader>
           <CardTitle>Create Trade Tip</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            onSubmit={handleSubmit(onSubmit, onError)}
+            className="space-y-6"
+          >
+            {/* Stock Information Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input {...register('stockId')} disabled placeholder="Stock ID" />
               <Input
@@ -146,13 +207,14 @@ const CreateTradeTip = () => {
               />
             </div>
 
+            {/* Trade Type and Term Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Controller
                 name="tradeType"
                 control={control}
                 render={({ field }) => (
                   <div>
-                    <label>Trade Type</label>
+                    <label className="block mb-2">Trade Type</label>
                     <Select {...field} onValueChange={field.onChange}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select trade type" />
@@ -171,7 +233,7 @@ const CreateTradeTip = () => {
                 control={control}
                 render={({ field }) => (
                   <div>
-                    <label>Trade Term</label>
+                    <label className="block mb-2">Trade Term</label>
                     <Select {...field} onValueChange={field.onChange}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select duration" />
@@ -187,45 +249,54 @@ const CreateTradeTip = () => {
               />
             </div>
 
+            {/* Trade Details Section */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label>Entry Range</label>
+                <label className="block mb-2">Entry Range</label>
                 <Input {...register('entryRange')} placeholder="e.g., 54-56" />
                 {errors.entryRange && (
-                  <p className="text-red-500">{errors.entryRange.message}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.entryRange.message}
+                  </p>
                 )}
               </div>
               <div>
-                <label>Stop Loss</label>
+                <label className="block mb-2">Stop Loss</label>
                 <Input {...register('stopLoss')} type="number" />
                 {errors.stopLoss && (
-                  <p className="text-red-500">{errors.stopLoss.message}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.stopLoss.message}
+                  </p>
                 )}
               </div>
               <div>
-                <label>Duration</label>
+                <label className="block mb-2">Duration</label>
                 <Input {...register('duration')} />
                 {errors.duration && (
-                  <p className="text-red-500">{errors.duration.message}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.duration.message}
+                  </p>
                 )}
               </div>
             </div>
+
             {/* Targets Section */}
             <div>
-              <div className="flex items-center gap-2">
-                <label>Targets</label>
+              <div className="flex items-center justify-between mb-4">
+                <label className="block">Targets</label>
                 <Button
                   type="button"
                   variant="secondary"
-                  className="mt-2"
                   onClick={() => append('')}
+                  className="flex items-center gap-2"
                 >
-                  <Plus className="h-5 w-5 mr-1" /> Add Target
+                  <Plus className="h-4 w-4" />
+                  Add Target
                 </Button>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4 p-2">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {fields.map((field, index) => (
-                  <div key={field.id} className="flex space-x-2 items-center">
+                  <div key={field.id} className="flex gap-2">
                     <Input
                       {...register(`targets.${index}`)}
                       placeholder={`Target ${index + 1}`}
@@ -234,40 +305,57 @@ const CreateTradeTip = () => {
                       type="button"
                       variant="ghost"
                       onClick={() => remove(index)}
+                      className="px-2"
                     >
-                      <Trash2 className="h-5 w-5 text-red-500" />
+                      <Trash2 className="h-4 w-4 text-red-500" />
                     </Button>
                   </div>
                 ))}
               </div>
               {errors.targets && (
-                <p className="text-red-500">
+                <p className="text-red-500 text-sm mt-1">
                   {errors.targets.message ||
                     errors.targets?.root?.message ||
                     errors.targets[0]?.message}
                 </p>
               )}
             </div>
-            {/* Stock Logo Upload */}
+
+            {/* Stock Logo Section */}
             <div>
-              <label className="">Stock Logo</label>
-              <div className="">
+              <label className="block mb-2">Stock Logo</label>
+              <div className="space-y-4">
                 <Input
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
+                  className="mb-4"
                 />
-                {previewImage && (
-                  <img
-                    src={previewImage}
-                    alt="Preview"
-                    className="mt-2 rounded-md max-w-32 object-cover border "
-                  />
+                {imageState.currentImage && (
+                  <div className="flex items-start space-x-4">
+                    <img
+                      src={imageState.currentImage}
+                      alt="Stock Logo"
+                      className="h-32 w-32 object-cover rounded-md border"
+                    />
+                    <div className="space-y-2">
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        onClick={handleRemoveImage}
+                        className="w-full"
+                      >
+                        Remove Image
+                      </Button>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
+
+            {/* Description Section */}
             <div>
-              <label>Description</label>
+              <label className="block mb-2">Description</label>
               <Textarea
                 {...register('description')}
                 placeholder="Enter trade description"
@@ -275,20 +363,22 @@ const CreateTradeTip = () => {
               />
             </div>
 
+            {/* Active Status Section */}
             <Controller
               name="active"
               control={control}
               render={({ field }) => (
                 <div className="flex items-center space-x-2">
-                  <label>Active</label>
                   <Switch
                     checked={field.value}
                     onCheckedChange={field.onChange}
                   />
+                  <label>Active</label>
                 </div>
               )}
             />
 
+            {/* Submit Button */}
             <Button type="submit" className="w-full">
               Create Trade Tip
             </Button>
