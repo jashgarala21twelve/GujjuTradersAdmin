@@ -83,7 +83,7 @@ const ProtectedRoutes: RouteObject[] = [
   { path: '/tradetips', element: <TradeTips /> },
   { path: '/tradetips/create', element: <TradeTipsStockTable /> },
   { path: '/tradetips/create/:symbol', element: <CreateTradeTip /> },
-  { path: '/tradetips/update/:id', element: <UpdateTradeTip /> },
+  { path: '/tradetips/view/:tradeTipId', element: <UpdateTradeTip /> },
   { path: '/social-links', element: <SocialLinks /> },
   // { path: '/media-assets', element: <MediaAssets /> },
   { path: '/plans', element: <Plans /> },

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import * as React from 'react';
+import * as React from "react";
 import {
   ColumnDef,
   flexRender,
@@ -8,11 +8,11 @@ import {
   getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table';
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from 'lucide-react';
+} from "@tanstack/react-table";
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -21,8 +21,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -30,14 +30,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
+} from "../ui/select";
 
 export function DynamicDataTable({
   data,
@@ -46,20 +46,21 @@ export function DynamicDataTable({
   currentPage,
   totalPages,
   onPageChange,
+  handleFilter,
 }) {
   const [sorting, setSorting] = React.useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
   // const [globalFilter, setGlobalFilter] = React.useState('');
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [rowSelection, setRowSelection] = React.useState({});
-  const [selectedFilters, setSelectedFilters] = React.useState(
-    filters.reduce((acc, filter) => {
-      if (filter.filedType === 'select') {
-        acc[filter.col_key] = 'All';
-      }
-      return acc;
-    }, {})
-  );
+  // const [selectedFilters, setSelectedFilters] = React.useState(
+  //   filters.reduce((acc, filter) => {
+  //     if (filter.filedType === "select") {
+  //       acc[filter.col_key] = "All";
+  //     }
+  //     return acc;
+  //   }, {})
+  // );
 
   const table = useReactTable({
     data,
@@ -82,7 +83,7 @@ export function DynamicDataTable({
     globalFilterFn: (row, _, value) => {
       return row
         .getAllCells()
-        .some(cell =>
+        .some((cell) =>
           cell
             .getValue()
             ?.toString()
@@ -93,21 +94,26 @@ export function DynamicDataTable({
     manualPagination: true, // Enables manual pagination
   });
 
-  const handleFilterChange = (colKey, value) => {
-    setSelectedFilters(prev => ({ ...prev, [colKey]: value }));
-    if (value === 'All') {
-      setColumnFilters(prev => prev.filter(filter => filter.id !== colKey));
-    } else {
-      setColumnFilters(prev => [
-        ...prev.filter(filter => filter.id !== colKey),
-        { id: colKey, value },
-      ]);
-    }
-  };
+  // const handleFilterChange = (colKey, value) => {
+  //   setSelectedFilters(prev => ({ ...prev, [colKey]: value }));
+  //   if (value === 'All') {
+  //     setColumnFilters(prev => prev.filter(filter => filter.id !== colKey));
+  //   } else {
+  //     setColumnFilters(prev => [
+  //       ...prev.filter(filter => filter.id !== colKey),
+  //       { id: colKey, value },
+  //     ]);
+  //   }
+  // };
 
+  // const handleFilterChange = (filter, value) => {
+  //   const { col_key } = filter;
+  //   setSelectedFilters((prev) => ({ ...prev, [col_key]: value }));
+  //   handleFilter(filter, value);
+  // };
   return (
-    <div className="w-full">
-      <div className="flex items-center ">
+    <div className="w-full ">
+      <div className="flex items-center pb-3 ">
         {/* <Input
           placeholder="Global Search..."
           value={globalFilter}
@@ -122,11 +128,11 @@ export function DynamicDataTable({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {table.getAllColumns().map(column => (
+            {table.getAllColumns().map((column) => (
               <DropdownMenuCheckboxItem
                 key={column.id}
                 checked={column.getIsVisible()}
-                onCheckedChange={value => column.toggleVisibility(!!value)}
+                onCheckedChange={(value) => column.toggleVisibility(!!value)}
               >
                 {column.id}
               </DropdownMenuCheckboxItem>
@@ -134,20 +140,20 @@ export function DynamicDataTable({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="grid grid-cols-3 gap-5 pb-4">
-        {filters.map(filter =>
-          filter.filedType === 'select' ? (
+      {/* <div className="grid grid-cols-3 gap-5 pb-4">
+        {filters.map((filter) =>
+          filter.filedType === "select" ? (
             <Select
               key={filter.col_key}
               value={selectedFilters[filter.col_key]}
-              onValueChange={value => handleFilterChange(filter.col_key, value)}
+              onValueChange={(value) => handleFilterChange(filter, value)}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder={filter.placeHolder} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="All">All</SelectItem>
-                {filter.options.map(option => (
+                {filter.options.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}
                   </SelectItem>
@@ -158,17 +164,17 @@ export function DynamicDataTable({
             <Input
               key={filter.col_key}
               placeholder={filter.placeHolder}
-              onChange={e => handleFilterChange(filter.col_key, e.target.value)}
+              onChange={(e) => handleFilterChange(filter, e.target.value)}
             />
           )
         )}
-      </div>
-      <div className="rounded-md border">
+      </div> */}
+      <div className="rounded-md border ">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map(headerGroup => (
+            {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
+                {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>
                     {header.isPlaceholder
                       ? null
@@ -183,9 +189,9 @@ export function DynamicDataTable({
           </TableHeader>
           <TableBody>
             {table.getRowModel()?.rows?.length ? (
-              table.getRowModel()?.rows?.map(row => (
+              table.getRowModel()?.rows?.map((row) => (
                 <TableRow key={row.id}>
-                  {row?.getVisibleCells()?.map(cell => (
+                  {row?.getVisibleCells()?.map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,

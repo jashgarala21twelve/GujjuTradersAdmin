@@ -7,7 +7,6 @@ const TradeTipsStockTable = () => {
   return (
     <div>
       <PageTitle title="Stocks Table" />
-
       <StockTable />
     </div>
   );
