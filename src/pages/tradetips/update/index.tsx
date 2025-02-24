@@ -1,47 +1,47 @@
-import React, { useEffect, useState } from "react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useParams } from "react-router-dom";
-import { useGetStockBySymbol } from "@/hooks/api/stocks/useStocks";
-import PageTitle from "@/components/pageTitle";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import React, { useEffect, useState } from 'react';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useGetStockBySymbol } from '@/hooks/api/stocks/useStocks';
+import PageTitle from '@/components/pageTitle';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Loader2, Plus, Trash2 } from 'lucide-react';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import Toast from "@/components/toast/commonToast";
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import Toast from '@/components/toast/commonToast';
 import {
   useGetTradeTip,
   useUpdateTradeTip,
-} from "@/hooks/api/tradetips/useTradeTips";
-import { convertToFormData } from "@/utils/helper";
-import dayjs from "dayjs";
-import { TRADE_TYPE } from "@/utils/constants";
+} from '@/hooks/api/tradetips/useTradeTips';
+import { convertToFormData } from '@/utils/helper';
+import dayjs from 'dayjs';
+import { TRADE_TYPE } from '@/utils/constants';
 // Define Schema
 const tradeTipSchema = z.object({
-  entryRange: z.string().nonempty("Entry Range is required"),
-  stopLoss: z.string().nonempty("Stop Loss is required"),
+  entryRange: z.string().nonempty('Entry Range is required'),
+  stopLoss: z.string().nonempty('Stop Loss is required'),
   description: z.string().optional(),
-  tradeType: z.enum(["BUY", "SELL"]),
-  tradeTerm: z.enum(["1", "2", "3"]),
+  tradeType: z.enum(['BUY', 'SELL']),
+  tradeTerm: z.enum(['1', '2', '3']),
   active: z.boolean(),
   // stockId: z.string().nonempty("Stock ID is required"),
   // stockSymbol: z.string().nonempty("Stock Symbol is required"),
   // stockName: z.string().nonempty("Stock Name is required"),
   // exchange: z.string(),
-  duration: z.string().nonempty("Duration is required"),
+  duration: z.string().nonempty('Duration is required'),
   targets: z
-    .array(z.string().nonempty("Target is required"))
-    .min(1, "At least one target is required"),
+    .array(z.string().nonempty('Target is required'))
+    .min(1, 'At least one target is required'),
   stockLogo: z.any().optional(),
   deleteStockLogo: z.boolean().optional(),
   planId: z.number(),
@@ -64,12 +64,14 @@ const UpdateTradeTip = () => {
     error: tradeTipError,
     refetch: refetchTradeTip,
   } = useGetTradeTip(tradeTipId as string);
-  const onSuccessTradeTipUpdate = (data) => {
-    Toast("success", data?.message || "Trade Tip Updated Successfully");
+
+  const onSuccessTradeTipUpdate = data => {
+    Toast('success', data?.message || 'Trade Tip Updated Successfully');
     refetchTradeTip();
   };
 
-  const { mutate: updateTradeTip } = useUpdateTradeTip(onSuccessTradeTipUpdate);
+  const { mutate: updateTradeTip, isPending: updateTradeTipPending } =
+    useUpdateTradeTip(onSuccessTradeTipUpdate);
   const [imageState, setImageState] = useState<ImageState>({
     currentImage: null,
     originalImage: null,
@@ -88,18 +90,18 @@ const UpdateTradeTip = () => {
   } = useForm({
     resolver: zodResolver(tradeTipSchema),
     defaultValues: {
-      entryRange: "",
-      stopLoss: "",
-      description: "",
-      tradeType: "BUY",
-      tradeTerm: "1",
+      entryRange: '',
+      stopLoss: '',
+      description: '',
+      tradeType: 'BUY',
+      tradeTerm: '1',
       active: false,
-      stockId: "",
-      stockSymbol: "",
-      stockName: "",
-      exchange: "",
-      duration: "",
-      targets: [""],
+      stockId: '',
+      stockSymbol: '',
+      stockName: '',
+      exchange: '',
+      duration: '',
+      targets: [''],
       deleteStockLogo: false,
       planId: 1,
     },
@@ -107,7 +109,7 @@ const UpdateTradeTip = () => {
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "targets",
+    name: 'targets',
   });
 
   useEffect(() => {
@@ -145,20 +147,20 @@ const UpdateTradeTip = () => {
       // setValue("active", active || false);
       // setValue("targets", targets);
       const tipData = tradeTipResponse.data;
-      console.log(tipData, "tipData");
+      console.log(tipData, 'tipData');
       reset({
-        stockId: tipData.stockId || "",
-        stockSymbol: tipData.stockSymbol || "",
-        stockName: tipData.stockName || "",
-        exchange: tipData.exchange || "",
-        tradeType: tipData.tradeType || "BUY", // Provide default values
-        tradeTerm: tipData.tradeTerm || "1", // Provide default values
-        entryRange: tipData.entryRange || "",
-        stopLoss: tipData.stopLoss || "",
-        duration: tipData.duration || "",
-        description: tipData.description || "",
+        stockId: tipData.stockId || '',
+        stockSymbol: tipData.stockSymbol || '',
+        stockName: tipData.stockName || '',
+        exchange: tipData.exchange || '',
+        tradeType: tipData.tradeType || 'BUY', // Provide default values
+        tradeTerm: tipData.tradeTerm || '1', // Provide default values
+        entryRange: tipData.entryRange || '',
+        stopLoss: tipData.stopLoss || '',
+        duration: tipData.duration || '',
+        description: tipData.description || '',
         active: tipData.active || false,
-        targets: tipData.targets || [""],
+        targets: tipData.targets || [''],
         planId: 1,
       });
 
@@ -177,14 +179,14 @@ const UpdateTradeTip = () => {
     const file = e.target.files?.[0];
     if (file) {
       const newImageUrl = URL.createObjectURL(file);
-      setImageState((prev) => ({
+      setImageState(prev => ({
         currentImage: newImageUrl,
         originalImage: prev.originalImage,
         isModified: true,
         file: file,
       }));
-      setValue("stockLogo", file);
-      setValue("deleteStockLogo", false);
+      setValue('stockLogo', file);
+      setValue('deleteStockLogo', false);
     }
   };
 
@@ -195,20 +197,20 @@ const UpdateTradeTip = () => {
       isModified: false,
       file: null,
     });
-    setValue("deleteStockLogo", true);
+    setValue('deleteStockLogo', true);
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = data => {
     const formData = convertToFormData(data);
     updateTradeTip({ tradeTipId, data: formData });
   };
-  const onError = (errors) => {
-    console.log("Validation Errors:", errors);
+  const onError = errors => {
+    console.log('Validation Errors:', errors);
 
     // Extract the first error message dynamically
     const firstError = Object.values(errors)?.[0]?.message;
     if (firstError) {
-      Toast("destructive", firstError);
+      Toast('destructive', firstError);
     }
   };
   if (isPending) {
@@ -250,11 +252,11 @@ const UpdateTradeTip = () => {
               <div className="space-y-1 text-sm text-muted-foreground md:ml-auto">
                 <p className="flex items-center gap-2">
                   <span className="font-medium">Created:</span>
-                  {dayjs(tradeTipData.createdAt).format("MMM D, YYYY, h:mm A")}
+                  {dayjs(tradeTipData.createdAt).format('MMM D, YYYY, h:mm A')}
                 </p>
                 <p className="flex items-center gap-2">
                   <span className="font-medium">Updated:</span>
-                  {dayjs(tradeTipData.updatedAt).format("MMM D, YYYY, h:mm A")}
+                  {dayjs(tradeTipData.updatedAt).format('MMM D, YYYY, h:mm A')}
                 </p>
               </div>
             </div>
@@ -267,19 +269,19 @@ const UpdateTradeTip = () => {
           >
             {/* Stock Information Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input {...register("stockId")} disabled placeholder="Stock ID" />
+              <Input {...register('stockId')} disabled placeholder="Stock ID" />
               <Input
-                {...register("stockSymbol")}
+                {...register('stockSymbol')}
                 disabled
                 placeholder="Symbol"
               />
               <Input
-                {...register("stockName")}
+                {...register('stockName')}
                 disabled
                 placeholder="Stock Name"
               />
               <Input
-                {...register("exchange")}
+                {...register('exchange')}
                 disabled
                 placeholder="Exchange"
               />
@@ -339,7 +341,7 @@ const UpdateTradeTip = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block mb-2">Entry Range</label>
-                <Input {...register("entryRange")} placeholder="e.g., 54-56" />
+                <Input {...register('entryRange')} placeholder="e.g., 54-56" />
                 {errors.entryRange && (
                   <p className="text-red-500 text-sm mt-1">
                     {errors.entryRange.message}
@@ -348,7 +350,7 @@ const UpdateTradeTip = () => {
               </div>
               <div>
                 <label className="block mb-2">Stop Loss</label>
-                <Input {...register("stopLoss")} type="number" />
+                <Input {...register('stopLoss')} type="number" />
                 {errors.stopLoss && (
                   <p className="text-red-500 text-sm mt-1">
                     {errors.stopLoss.message}
@@ -357,7 +359,7 @@ const UpdateTradeTip = () => {
               </div>
               <div>
                 <label className="block mb-2">Duration</label>
-                <Input {...register("duration")} />
+                <Input {...register('duration')} />
                 {errors.duration && (
                   <p className="text-red-500 text-sm mt-1">
                     {errors.duration.message}
@@ -373,7 +375,7 @@ const UpdateTradeTip = () => {
                 <Button
                   type="button"
                   variant="secondary"
-                  onClick={() => append("")}
+                  onClick={() => append('')}
                   className="flex items-center gap-2"
                 >
                   <Plus className="h-4 w-4" />
@@ -443,7 +445,7 @@ const UpdateTradeTip = () => {
             <div>
               <label className="block mb-2">Description</label>
               <Textarea
-                {...register("description")}
+                {...register('description')}
                 placeholder="Enter trade description"
                 className="h-24"
               />
@@ -471,7 +473,7 @@ const UpdateTradeTip = () => {
                 className="w-full text-white font-semibold"
                 variant="default"
               >
-                Update Trade Tip
+                {updateTradeTipPending ? 'Updating...' : 'Update Trade Tip'}
               </Button>
               <Button
                 type="submit"

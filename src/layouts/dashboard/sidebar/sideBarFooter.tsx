@@ -34,7 +34,7 @@ export const SidebarFooterComponent = () => {
   };
 
   return (
-    <SidebarFooter className="border-t  border-r border-secondary dark:bg-gray-950">
+    <SidebarFooter className="border-t border-r  dark:bg-gray-950">
       <div className="flex flex-col gap-5 py-3">
         {/* <Button variant="outline">Change Password</Button> */}
 

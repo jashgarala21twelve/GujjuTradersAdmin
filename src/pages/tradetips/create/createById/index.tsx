@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useGetStockBySymbol } from '@/hooks/api/stocks/useStocks';
 import PageTitle from '@/components/pageTitle';
 import { Button } from '@/components/ui/button';
@@ -57,14 +57,15 @@ const CreateTradeTip = () => {
     data: stockSymbolResponse,
     isPending,
   } = useGetStockBySymbol();
+  const navigate = useNavigate();
   const onSuccessTradeTipCreation = data => {
     console.log(data, 'data');
     Toast('success', data?.message || 'Trade Tip Created Successfully');
+    navigate('/tradetips');
   };
 
-  const { mutate: createTradeTip } = useCreateTradeTip(
-    onSuccessTradeTipCreation
-  );
+  const { mutate: createTradeTip, isPending: createTradeTipPending } =
+    useCreateTradeTip(onSuccessTradeTipCreation);
   const [imageState, setImageState] = useState<ImageState>({
     currentImage: null,
     originalImage: null,
@@ -380,7 +381,9 @@ const CreateTradeTip = () => {
 
             {/* Submit Button */}
             <Button type="submit" className="w-full">
-              Create Trade Tip
+              {createTradeTipPending
+                ? 'Creating Trade Tip.... '
+                : 'Create Trade Tip'}
             </Button>
           </form>
         </CardContent>
