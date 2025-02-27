@@ -335,6 +335,12 @@ export const sidebarMenus = {
       icon: CreditCard,
       title: 'Plans',
     },
+    {
+      key: 'plans-create',
+      name: 'Create Plan',
+      path: '/plans/create',
+      icon: CreditCard,
+    },
   ],
   settings: [
     {

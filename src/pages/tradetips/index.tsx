@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useTradeTipsList } from "@/hooks/api/tradetips/useTradeTips";
+import { useTradeTipsList } from "@/hooks/api/tradetips";
 import { ColumnDef } from "@tanstack/react-table";
 import { debounce } from "lodash";
 import { ArrowUpDown, Loader2 } from "lucide-react";

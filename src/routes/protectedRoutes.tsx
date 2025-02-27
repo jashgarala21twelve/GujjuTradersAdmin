@@ -1,3 +1,4 @@
+import CreatePlan from '@/pages/plans/create';
 import User from '@/pages/user';
 import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
@@ -87,6 +88,7 @@ const ProtectedRoutes: RouteObject[] = [
   { path: '/social-links', element: <SocialLinks /> },
   // { path: '/media-assets', element: <MediaAssets /> },
   { path: '/plans', element: <Plans /> },
+  { path: '/plans/create', element: <CreatePlan /> },
   { path: '/settings', element: <Settings /> },
 ];
 

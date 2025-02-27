@@ -31,7 +31,7 @@ import {
 import {
   useRefetchStockList,
   useStockList,
-} from '@/hooks/api/stocks/useStocks';
+} from '@/hooks/api/stocks';
 import { useNavigate } from 'react-router-dom';
 
 const StockTable = () => {

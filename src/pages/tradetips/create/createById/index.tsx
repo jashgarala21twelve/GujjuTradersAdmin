@@ -3,7 +3,7 @@ import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGetStockBySymbol } from '@/hooks/api/stocks/useStocks';
+import { useGetStockBySymbol } from '@/hooks/api/stocks';
 import PageTitle from '@/components/pageTitle';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,8 +19,8 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import Toast from '@/components/toast/commonToast';
-import { useCreateTradeTip } from '@/hooks/api/tradetips/useTradeTips';
-import { convertToFormData } from '@/utils/helper';
+import { useCreateTradeTip } from '@/hooks/api/tradetips';
+import { convertToFormData, onFormErrors } from '@/utils/helper';
 
 // Define Schema
 const tradeTipSchema = z.object({
@@ -99,7 +99,7 @@ const CreateTradeTip = () => {
       planId: 1,
     },
   });
-  console.log(errors, 'errors');
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'targets',
@@ -160,15 +160,7 @@ const CreateTradeTip = () => {
     console.log('Form Data:', data);
     // Handle form submission
   };
-  const onError = errors => {
-    console.log('Validation Errors:', errors);
 
-    // Extract the first error message dynamically
-    const firstError = Object.values(errors)?.[0]?.message;
-    if (firstError) {
-      Toast('destructive', firstError);
-    }
-  };
   if (isPending) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -185,7 +177,7 @@ const CreateTradeTip = () => {
         </CardHeader>
         <CardContent>
           <form
-            onSubmit={handleSubmit(onSubmit, onError)}
+            onSubmit={handleSubmit(onSubmit, onFormErrors)}
             className="space-y-6"
           >
             {/* Stock Information Section */}

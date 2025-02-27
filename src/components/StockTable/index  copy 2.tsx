@@ -30,7 +30,7 @@ import {
 import {
   useRefetchStockList,
   useStockList,
-} from '@/hooks/api/stocks/useStocks';
+} from '@/hooks/api/stocks';
 
 const StockTable = () => {
   const [data, setData] = useState([]);

@@ -3,7 +3,7 @@ import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGetStockBySymbol } from '@/hooks/api/stocks/useStocks';
+import { useGetStockBySymbol } from '@/hooks/api/stocks';
 import PageTitle from '@/components/pageTitle';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,7 +22,7 @@ import Toast from '@/components/toast/commonToast';
 import {
   useGetTradeTip,
   useUpdateTradeTip,
-} from '@/hooks/api/tradetips/useTradeTips';
+} from '@/hooks/api/tradetips';
 import { convertToFormData } from '@/utils/helper';
 import dayjs from 'dayjs';
 import { TRADE_TYPE } from '@/utils/constants';

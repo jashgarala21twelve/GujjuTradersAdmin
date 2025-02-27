@@ -1,3 +1,4 @@
+import Toast from '@/components/toast/commonToast';
 
 export const convertToFormData = data => {
   const formData = new FormData();
@@ -33,5 +34,10 @@ export const generateFakePayments = (count: number) => {
     email: `user${i + 1}@example.com`, // Sequential fake email addresses
   }));
 };
-
+export const onFormErrors = errors => {
+  const firstError = Object.values(errors)?.[0]?.message;
+  if (firstError) {
+    Toast('destructive', firstError);
+  }
+};
 // Generate 50 fake records

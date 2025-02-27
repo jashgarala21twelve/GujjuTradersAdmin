@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useParams } from 'react-router-dom';
-import { useGetStockBySymbol } from '@/hooks/api/stocks/useStocks';
+import { useGetStockBySymbol } from '@/hooks/api/stocks';
 import PageTitle from '@/components/pageTitle';
 
 const tradeTipSchema = z.object({
