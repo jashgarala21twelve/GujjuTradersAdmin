@@ -2,8 +2,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+
 
 import { Button } from '@/components/ui/button';
 import {
@@ -94,7 +93,7 @@ const PlanForm = ({ existingPlan = null }) => {
         monthly: 0,
         yearly: 0,
       },
-      features: [1, 2, 3],
+      features: [],
       description: '',
       trialAvailable: false,
       platformAccess: [],
@@ -164,7 +163,7 @@ const PlanForm = ({ existingPlan = null }) => {
             name="price.monthly"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Monthly Price ($)</FormLabel>
+                <FormLabel>Monthly Price (₹)</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -187,7 +186,7 @@ const PlanForm = ({ existingPlan = null }) => {
             name="price.yearly"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Yearly Price ($)</FormLabel>
+                <FormLabel>Yearly Price (₹)</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -210,7 +209,7 @@ const PlanForm = ({ existingPlan = null }) => {
             name="price.discount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Discount (%)</FormLabel>
+                <FormLabel>Discount (₹)</FormLabel>
                 <FormControl>
                   <Input
                     disabled

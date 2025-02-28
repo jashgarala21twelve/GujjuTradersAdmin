@@ -1,5 +1,3 @@
-import CreatePlan from '@/pages/plans/create';
-import User from '@/pages/user';
 import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
 
@@ -40,6 +38,10 @@ const SocialLinks = lazy(() => import('@/pages/sociallinks'));
 const Plans = lazy(() => import('@/pages/plans'));
 
 const Settings = lazy(() => import('@/pages/settings'));
+
+const User = lazy(() => import('@/pages/user'));
+const CreatePlan = lazy(() => import('@/pages/plans/create'));
+const UpdatePlan = lazy(() => import('@/pages/plans/update'));
 
 // Define Routes
 // const ProtectedRoutes: RouteObject[] = [
@@ -89,6 +91,7 @@ const ProtectedRoutes: RouteObject[] = [
   // { path: '/media-assets', element: <MediaAssets /> },
   { path: '/plans', element: <Plans /> },
   { path: '/plans/create', element: <CreatePlan /> },
+  { path: '/plans/view/:planId', element: <UpdatePlan /> },
   { path: '/settings', element: <Settings /> },
 ];
 
