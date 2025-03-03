@@ -4,7 +4,7 @@ import { request } from '../api';
 export const BASE_AUTH_ROUTE = BASE_API_URL;
 
 const ROUTES = {
-  PLANS: BASE_AUTH_ROUTE + '/plans/',
+  PLANS: BASE_AUTH_ROUTE + '/plans',
 };
 
 export const createPlan = async data => {
@@ -23,6 +23,9 @@ export const updatePlan = async ({
 
 export const getPlans = async params => {
   return request('get', ROUTES.PLANS, null, { params });
+};
+export const getActivePlans = async () => {
+  return request('get', ROUTES.PLANS + '/active', null);
 };
 
 export const getPlan = async (planId: string) => {

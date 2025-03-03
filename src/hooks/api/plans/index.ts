@@ -1,6 +1,12 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { createPlan, getPlan, getPlans, updatePlan } from '@/api/plans';
+import {
+  createPlan,
+  getActivePlans,
+  getPlan,
+  getPlans,
+  updatePlan,
+} from '@/api/plans';
 
 export const useCreatePlan = onSuccessHandler => {
   return useMutation({
@@ -29,7 +35,13 @@ export const useGetPlans = params => {
     staleTime: 5 * 60 * 1000, // Cache data for 5 minutes
   });
 };
-
+export const useGetActivePlans = () => {
+  return useQuery({
+    queryKey: [], // Ensures query re-fetches when params change
+    queryFn: () => getActivePlans(), // Calls API function
+    staleTime: 5 * 60 * 1000, // Cache data for 5 minutes
+  });
+};
 export const useGetPlan = (planId: string) => {
   return useQuery({
     queryKey: [planId],

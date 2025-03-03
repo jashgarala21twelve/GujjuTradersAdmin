@@ -21,6 +21,8 @@ import { Switch } from '@/components/ui/switch';
 import Toast from '@/components/toast/commonToast';
 import { useCreateTradeTip } from '@/hooks/api/tradetips';
 import { convertToFormData, onFormErrors } from '@/utils/helper';
+import { useGetActivePlans } from '@/hooks/api/plans';
+import { Checkbox } from '@/components/ui/checkbox';
 
 // Define Schema
 const tradeTipSchema = z.object({
@@ -41,6 +43,7 @@ const tradeTipSchema = z.object({
   stockLogo: z.any().optional(),
   deleteStockLogo: z.boolean().optional(),
   planId: z.number(),
+  plans: z.array(z.string()),
 });
 
 interface ImageState {
@@ -57,6 +60,7 @@ const CreateTradeTip = () => {
     data: stockSymbolResponse,
     isPending,
   } = useGetStockBySymbol();
+
   const navigate = useNavigate();
   const onSuccessTradeTipCreation = data => {
     console.log(data, 'data');
@@ -73,6 +77,8 @@ const CreateTradeTip = () => {
     file: null,
   });
 
+  const { data: activePlansResponse, isPending: activePlansPending } =
+    useGetActivePlans();
   const {
     register,
     handleSubmit,
@@ -97,6 +103,7 @@ const CreateTradeTip = () => {
       targets: [''],
       deleteStockLogo: false,
       planId: 1,
+      plans: [],
     },
   });
 
@@ -104,7 +111,7 @@ const CreateTradeTip = () => {
     control,
     name: 'targets',
   });
-
+  const [plans, setPlans] = useState([]);
   useEffect(() => {
     mutate({ symbol });
   }, [symbol, mutate]);
@@ -128,6 +135,13 @@ const CreateTradeTip = () => {
       }
     }
   }, [stockSymbolResponse, setValue]);
+
+  useEffect(() => {
+    if (activePlansResponse) {
+      const { data } = activePlansResponse;
+      setPlans(data);
+    }
+  }, [activePlansResponse]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -355,6 +369,199 @@ const CreateTradeTip = () => {
                 className="h-24"
               />
             </div>
+            {/* {FEATURE_OPTIONS.map(feature => (
+                <FormField
+                  key={feature.id}
+                  control={form.control}
+                  name="features"
+                  render={({ field }) => {
+                    return (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value?.includes(feature.id)}
+                            onCheckedChange={checked => {
+                              return checked
+                                ? field.onChange([...field.value, feature.id])
+                                : field.onChange(
+                                    field.value?.filter(
+                                      value => value !== feature.id
+                                    )
+                                  );
+                            }}
+                          />
+                        </FormControl>
+                        <FormLabel className="font-normal cursor-pointer">
+                          {feature.label}
+                        </FormLabel>
+                      </FormItem>
+                    );
+                  }}
+                />
+              ))} */}
+            {/* <Controller
+              name="plans"
+              control={control}
+              render={({ field }) => (
+                <div className=" ">
+                  <label className="block mb-2">Plans</label>
+                  <div className="flex gap-4 flex-col border rounded-md p-2 ">
+                    {plans?.map((plan: any) => (
+                      <div className="flex items-center gap-3  col-span-3">
+                        <label>{plan?.name}</label>
+                        <Checkbox
+                          checked={field.value?.includes(plan._id)}
+                          onCheckedChange={checked => {
+                            return checked
+                              ? field.onChange([...field.value, plan._id])
+                              : field.onChange(
+                                  field.value?.filter(
+                                    value => value !== plan._id
+                                  )
+                                );
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            /> */}
+            {/* <Controller
+              name="plans"
+              control={control}
+              render={({ field }) => (
+                <div className="mb-6">
+                  <label className="block text-sm font-medium mb-3">
+                    Subscription Plans
+                  </label>
+                  <div className=" border rounded-lg shadow-sm overflow-hidden">
+                    {plans?.map(plan => (
+                      <div
+                        key={plan._id}
+                        className="flex items-center justify-between p-4 border-b  transition-colors"
+                      >
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-medium ">{plan?.name}</h3>
+                            <span className=" text-xs px-2 py-0.5 rounded-full">
+                              {plan?.planKey}
+                            </span>
+                          </div>
+
+                          <div className="mt-1 flex items-center gap-4 text-sm ">
+                            <div className="flex items-center">
+                              <span className="font-semibold ">
+                              ₹{plan?.price?.monthly}
+                              </span>
+                              <span className="ml-1">/ month</span>
+                            </div>
+
+                            <div className="flex items-center">
+                              <span className="font-semibold ">
+                                ₹{plan?.price?.yearly}
+                              </span>
+                              <span className="ml-1">/ year</span>
+                            </div>
+
+                            {plan?.price?.discount > 0 && (
+                              <div className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">
+                                {plan?.price?.discount}% off
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div>
+                          <Checkbox
+                            id={`plan-${plan._id}`}
+                            checked={field.value?.includes(plan._id)}
+                            onCheckedChange={checked => {
+                              return checked
+                                ? field.onChange([...field.value, plan._id])
+                                : field.onChange(
+                                    field.value?.filter(
+                                      value => value !== plan._id
+                                    )
+                                  );
+                            }}
+                            className="h-5 w-5 text-blue-600"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            /> */}
+            <Controller
+              name="plans"
+              control={control}
+              render={({ field }) => (
+                <div className="mb-6">
+                  <label className="block text-sm font-medium mb-3">
+                    Subscription Plans
+                  </label>
+                  <div className=" border rounded-lg shadow-sm overflow-hidden">
+                    {plans?.map(plan => (
+                      <label
+                        key={plan._id}
+                        htmlFor={`plan-${plan._id}`}
+                        className="flex items-center justify-between p-4 border-b transition-colors cursor-pointer "
+                      >
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-medium ">{plan?.name}</h3>
+                            <span className=" text-xs px-2 py-0.5 rounded-full">
+                              {plan?.planKey}
+                            </span>
+                          </div>
+
+                          <div className="mt-1 flex items-center gap-4 text-sm ">
+                            <div className="flex items-center">
+                              <span className="font-semibold ">
+                                ₹{plan?.price?.monthly}
+                              </span>
+                              <span className="ml-1">/ month</span>
+                            </div>
+
+                            <div className="flex items-center">
+                              <span className="font-semibold ">
+                                ₹{plan?.price?.yearly}
+                              </span>
+                              <span className="ml-1">/ year</span>
+                            </div>
+
+                            {plan?.price?.discount > 0 && (
+                              <div className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">
+                                {plan?.price?.discount}% off
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div>
+                          <Checkbox
+                            id={`plan-${plan._id}`}
+                            checked={field.value?.includes(plan._id)}
+                            onCheckedChange={checked => {
+                              return checked
+                                ? field.onChange([...field.value, plan._id])
+                                : field.onChange(
+                                    field.value?.filter(
+                                      value => value !== plan._id
+                                    )
+                                  );
+                            }}
+                            className="h-5 w-5 text-blue-600"
+                          />
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+            />
 
             {/* Active Status Section */}
             <Controller
