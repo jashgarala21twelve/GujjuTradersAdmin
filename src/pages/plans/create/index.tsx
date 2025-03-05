@@ -3,7 +3,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
-
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -122,111 +121,113 @@ const PlanForm = ({ existingPlan = null }) => {
   };
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit, onFormErrors)}
-        className="space-y-8 w-full max-w-5xl"
-      >
-        <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
-          {/* Plan Key */}
-          <FormField
-            control={form.control}
-            name="planKey"
-            render={({ field }) => (
-              <FormItem className="md:col-span-2">
-                <FormLabel>Plan Key</FormLabel>
-                <FormControl>
-                  <Input placeholder="UNIQUE_PLAN_KEY" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {/* Plan Name */}
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem className="md:col-span-2">
-                <FormLabel>Plan Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Starter Trader" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+    <div>
+      <h1 className="text-2xl font-bold mb-6">Create New Plan</h1>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit, onFormErrors)}
+          className="space-y-8 w-full max-w-5xl"
+        >
+          <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+            {/* Plan Key */}
+            <FormField
+              control={form.control}
+              name="planKey"
+              render={({ field }) => (
+                <FormItem className="md:col-span-2">
+                  <FormLabel>Plan Key</FormLabel>
+                  <FormControl>
+                    <Input placeholder="UNIQUE_PLAN_KEY" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {/* Plan Name */}
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem className="md:col-span-2">
+                  <FormLabel>Plan Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Starter Trader" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* Monthly Price */}
-          <FormField
-            control={form.control}
-            name="price.monthly"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Monthly Price (₹)</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    min={0}
-                    {...field}
-                    onChange={e => {
-                      field.onChange(parseFloat(e.target.value));
-                      handleDiscount();
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            {/* Monthly Price */}
+            <FormField
+              control={form.control}
+              name="price.monthly"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Monthly Price (₹)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={0}
+                      {...field}
+                      onChange={e => {
+                        field.onChange(parseFloat(e.target.value));
+                        handleDiscount();
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* Yearly Price */}
-          <FormField
-            control={form.control}
-            name="price.yearly"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Yearly Price (₹)</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    min={0}
-                    {...field}
-                    onChange={e => {
-                      field.onChange(parseFloat(e.target.value));
-                      handleDiscount();
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            {/* Yearly Price */}
+            <FormField
+              control={form.control}
+              name="price.yearly"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Yearly Price (₹)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={0}
+                      {...field}
+                      onChange={e => {
+                        field.onChange(parseFloat(e.target.value));
+                        handleDiscount();
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* Discount */}
-          <FormField
-            control={form.control}
-            name="price.discount"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Discount (₹)</FormLabel>
-                <FormControl>
-                  <Input
-                    disabled
-                    type="number"
-                    min="0"
-                    max="100"
-                    {...field}
-                    onChange={e => field.onChange(parseFloat(e.target.value))}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            {/* Discount */}
+            <FormField
+              control={form.control}
+              name="price.discount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Discount (₹)</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled
+                      type="number"
+                      min="0"
+                      max="100"
+                      {...field}
+                      onChange={e => field.onChange(parseFloat(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* Trial Price */}
-          {/* <FormField
+            {/* Trial Price */}
+            {/* <FormField
             control={form.control}
             name="trialPrice"
             render={({ field }) => (
@@ -244,8 +245,8 @@ const PlanForm = ({ existingPlan = null }) => {
             )}
           /> */}
 
-          {/* Referral Bonus */}
-          {/* <FormField
+            {/* Referral Bonus */}
+            {/* <FormField
             control={form.control}
             name="referralBonus"
             render={({ field }) => (
@@ -263,199 +264,203 @@ const PlanForm = ({ existingPlan = null }) => {
             )}
           /> */}
 
-          {/* Description */}
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem className="md:col-span-2">
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Textarea
-                    rows={4}
-                    placeholder="Best for beginner traders looking to get started."
-                    {...field}
+            {/* Description */}
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem className="md:col-span-2">
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      rows={4}
+                      placeholder="Best for beginner traders looking to get started."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Features */}
+            <div className="md:col-span-2">
+              <FormLabel>Features</FormLabel>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                {FEATURE_OPTIONS.map(feature => (
+                  <FormField
+                    key={feature.id}
+                    control={form.control}
+                    name="features"
+                    render={({ field }) => {
+                      return (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.includes(feature.id)}
+                              onCheckedChange={checked => {
+                                return checked
+                                  ? field.onChange([...field.value, feature.id])
+                                  : field.onChange(
+                                      field.value?.filter(
+                                        value => value !== feature.id
+                                      )
+                                    );
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="font-normal cursor-pointer">
+                            {feature.label}
+                          </FormLabel>
+                        </FormItem>
+                      );
+                    }}
                   />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Features */}
-          <div className="md:col-span-2">
-            <FormLabel>Features</FormLabel>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
-              {FEATURE_OPTIONS.map(feature => (
-                <FormField
-                  key={feature.id}
-                  control={form.control}
-                  name="features"
-                  render={({ field }) => {
-                    return (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value?.includes(feature.id)}
-                            onCheckedChange={checked => {
-                              return checked
-                                ? field.onChange([...field.value, feature.id])
-                                : field.onChange(
-                                    field.value?.filter(
-                                      value => value !== feature.id
-                                    )
-                                  );
-                            }}
-                          />
-                        </FormControl>
-                        <FormLabel className="font-normal cursor-pointer">
-                          {feature.label}
-                        </FormLabel>
-                      </FormItem>
-                    );
-                  }}
-                />
-              ))}
+                ))}
+              </div>
+              <FormMessage />
             </div>
-            <FormMessage />
-          </div>
 
-          {/* Platform Access */}
-          <div className="md:col-span-2">
-            <FormLabel>Platform Access</FormLabel>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
-              {PLAN_PLATFORM_ACCESS_OPTIONS.map(platform => (
-                <FormField
-                  key={platform.id}
-                  control={form.control}
-                  name="platformAccess"
-                  render={({ field }) => {
-                    return (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value?.includes(platform.id)}
-                            onCheckedChange={checked => {
-                              return checked
-                                ? field.onChange([...field.value, platform.id])
-                                : field.onChange(
-                                    field.value?.filter(
-                                      value => value !== platform.id
-                                    )
-                                  );
-                            }}
-                          />
-                        </FormControl>
-                        <FormLabel className="font-normal cursor-pointer">
-                          {platform.label}
-                        </FormLabel>
-                      </FormItem>
-                    );
-                  }}
-                />
-              ))}
+            {/* Platform Access */}
+            <div className="md:col-span-2">
+              <FormLabel>Platform Access</FormLabel>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                {PLAN_PLATFORM_ACCESS_OPTIONS.map(platform => (
+                  <FormField
+                    key={platform.id}
+                    control={form.control}
+                    name="platformAccess"
+                    render={({ field }) => {
+                      return (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.includes(platform.id)}
+                              onCheckedChange={checked => {
+                                return checked
+                                  ? field.onChange([
+                                      ...field.value,
+                                      platform.id,
+                                    ])
+                                  : field.onChange(
+                                      field.value?.filter(
+                                        value => value !== platform.id
+                                      )
+                                    );
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="font-normal cursor-pointer">
+                            {platform.label}
+                          </FormLabel>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                ))}
+              </div>
+              <FormMessage />
             </div>
-            <FormMessage />
+
+            {/* Trial Available */}
+            <FormField
+              control={form.control}
+              name="trialAvailable"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between">
+                  <div className="space-y-0.5">
+                    <FormLabel>Trial Available</FormLabel>
+                    <FormDescription>
+                      Enable trial option for this plan
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {/* Webinars */}
+            <FormField
+              control={form.control}
+              name="webinars"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between">
+                  <div className="space-y-0.5">
+                    <FormLabel>Webinars</FormLabel>
+                    <FormDescription>
+                      Include webinar access with this plan
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {/* Response Time */}
+            <FormField
+              control={form.control}
+              name="responseTime"
+              render={({ field }) => (
+                <FormItem className="md:col-span-2">
+                  <FormLabel>Response Time</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select response time" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Object.values(RESPONSE_TIME_OPTIONS).map(option => (
+                        <SelectItem key={option} value={option}>
+                          {option}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
           {/* Trial Available */}
           <FormField
             control={form.control}
-            name="trialAvailable"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between">
-                <div className="space-y-0.5">
-                  <FormLabel>Trial Available</FormLabel>
-                  <FormDescription>
-                    Enable trial option for this plan
-                  </FormDescription>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-
-          {/* Webinars */}
-          <FormField
-            control={form.control}
-            name="webinars"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between">
-                <div className="space-y-0.5">
-                  <FormLabel>Webinars</FormLabel>
-                  <FormDescription>
-                    Include webinar access with this plan
-                  </FormDescription>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-
-          {/* Response Time */}
-          <FormField
-            control={form.control}
-            name="responseTime"
+            name="isActive"
             render={({ field }) => (
               <FormItem className="md:col-span-2">
-                <FormLabel>Response Time</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select response time" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {Object.values(RESPONSE_TIME_OPTIONS).map(option => (
-                      <SelectItem key={option} value={option}>
-                        {option}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
+                <div className="">
+                  <FormLabel>Plan Active</FormLabel>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
               </FormItem>
             )}
           />
-        </div>
-
-        {/* Trial Available */}
-        <FormField
-          control={form.control}
-          name="isActive"
-          render={({ field }) => (
-            <FormItem className="md:col-span-2">
-              <div className="">
-                <FormLabel>Plan Active</FormLabel>
-              </div>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        {/* Submit Button */}
-        <Button type="submit" className="w-full md:w-auto">
-          {isCreatePlanPending ? 'Creating.....' : 'Create Plan'}
-        </Button>
-      </form>
-    </Form>
+          {/* Submit Button */}
+          <Button type="submit" className="w-full md:w-auto">
+            {isCreatePlanPending ? 'Creating.....' : 'Create Plan'}
+          </Button>
+        </form>
+      </Form>
+    </div>
   );
 };
 

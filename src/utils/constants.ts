@@ -110,3 +110,7 @@ export const RESPONSE_TIME_SELECT_OPTIONS = [
     label: RESPONSE_TIME_OPTIONS.WITHIN_48_HOURS,
   },
 ];
+export const COUPONS_DISCOUNT_TYPE = {
+  FIXED: 'fixed', // Fixed amount
+  PERCENTAGE: 'percentage', // Percentage of some value
+};

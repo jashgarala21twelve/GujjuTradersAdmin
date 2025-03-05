@@ -1,4 +1,5 @@
 import AlertDialogComponent from '@/components/alertDialog/alertConfirmDialog';
+import CopyToClipboard from '@/components/copyToClipBoard';
 import DynamicDataTable from '@/components/datatable/datatable';
 import { CircleLoading } from '@/components/loader';
 import Loader from '@/components/loader/loader';
@@ -275,7 +276,11 @@ const Users = () => {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ row }) => <div>{row.getValue('_id')}</div>,
+      cell: ({ row }) => (
+        <div>
+          <CopyToClipboard text={row.getValue('_id')} />
+        </div>
+      ),
     },
     {
       accessorKey: 'full_name',
@@ -285,7 +290,15 @@ const Users = () => {
     {
       accessorKey: 'phone_number',
       header: 'Phone Number',
-      cell: ({ row }) => <div>{row.getValue('phone_number')}</div>,
+      cell: ({ row }) => (
+        <div>
+          {' '}
+          <CopyToClipboard
+            text={row.getValue('phone_number')}
+            textStyle="font-semibold"
+          />
+        </div>
+      ),
     },
     {
       accessorKey: 'email',
@@ -299,7 +312,9 @@ const Users = () => {
         </Button>
       ),
       cell: ({ row }) => (
-        <div className="lowercase">{row.getValue('email')}</div>
+        <div className="lowercase">
+          <CopyToClipboard text={row.getValue('email')} textStyle="" />
+        </div>
       ),
     },
     {

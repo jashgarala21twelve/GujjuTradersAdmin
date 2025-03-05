@@ -1,9 +1,10 @@
-import DynamicDataTable from "@/components/datatable/datatable";
-import { CircleLoading } from "@/components/loader";
-import PageTitle from "@/components/pageTitle";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import CopyToClipboard from '@/components/copyToClipBoard';
+import DynamicDataTable from '@/components/datatable/datatable';
+import { CircleLoading } from '@/components/loader';
+import PageTitle from '@/components/pageTitle';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -11,18 +12,18 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useTradeTipsList } from "@/hooks/api/tradetips";
-import { ColumnDef } from "@tanstack/react-table";
-import { debounce } from "lodash";
-import { ArrowUpDown, Loader2 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+} from '@/components/ui/select';
+import { useTradeTipsList } from '@/hooks/api/tradetips';
+import { ColumnDef } from '@tanstack/react-table';
+import { debounce } from 'lodash';
+import { ArrowUpDown, Loader2 } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const TradeTips = () => {
   const [data, setData] = useState([]);
-  const [search, setSearch] = useState("");
-  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState('');
+  const [searchInput, setSearchInput] = useState('');
   const [pagination, setPagination] = useState({
     currentPage: 1,
     perPage: 10,
@@ -64,8 +65,8 @@ const TradeTips = () => {
     search,
     searchQueryParams,
   ]);
-  const handlePageChange = (page) => {
-    setPagination((prev) => {
+  const handlePageChange = page => {
+    setPagination(prev => {
       return {
         ...prev,
         currentPage: page,
@@ -73,9 +74,9 @@ const TradeTips = () => {
     });
   };
   const debouncedSearch = useCallback(
-    debounce((value) => {
+    debounce(value => {
       setSearch(value);
-      setPagination((prev) => {
+      setPagination(prev => {
         return {
           ...prev,
           currentPage: 1,
@@ -84,31 +85,35 @@ const TradeTips = () => {
     }, 500), // 500ms delay
     []
   );
-  const onHandleSearch = (value) => {
+  const onHandleSearch = value => {
     setSearchInput(value);
     debouncedSearch(value);
   };
   const columns: ColumnDef[] = [
     {
-      accessorKey: "_id",
+      accessorKey: '_id',
       header: ({ column }) => (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           ID
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ row }) => <div>{row.getValue("_id")}</div>,
+      cell: ({ row }) => (
+        <div>
+          <CopyToClipboard text={row.getValue('_id')} />
+        </div>
+      ),
     },
     {
-      accessorKey: "stockLogo",
-      header: "Logo",
+      accessorKey: 'stockLogo',
+      header: 'Logo',
       cell: ({ row }) => {
-        const stockLogo = row.getValue("stockLogo");
-        const stockLogoLetter = row.getValue("stockSymbol").slice(0, 1);
-        console.log(stockLogo, "stockLogo");
+        const stockLogo = row.getValue('stockLogo');
+        const stockLogoLetter = row.getValue('stockSymbol').slice(0, 1);
+        console.log(stockLogo, 'stockLogo');
         if (!stockLogo)
           return (
             <div className="h-10 w-10 bg-secondary  font-bold  rounded-full flex items-center justify-center ">
@@ -125,28 +130,39 @@ const TradeTips = () => {
       },
     },
     {
-      accessorKey: "stockSymbol",
+      accessorKey: 'stockSymbol',
       header: ({ column }) => (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Symbol
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ row }) => <div>{row.getValue("stockSymbol")}</div>,
-    },
-    {
-      accessorKey: "stockName",
-      header: "Stock Name",
-      cell: ({ row }) => <div>{row.getValue("stockName")}</div>,
-    },
-    {
-      accessorKey: "tradeType",
-      header: "Trade Type",
       cell: ({ row }) => (
-        <div className="font-medium">{row.getValue("tradeType")}</div>
+        <div>
+          <CopyToClipboard
+            text={row.getValue('stockSymbol')}
+            textStyle="font-semibold"
+          />
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'stockName',
+      header: 'Stock Name',
+      cell: ({ row }) => (
+        <div>
+          <CopyToClipboard text={row.getValue('stockName')} />
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'tradeType',
+      header: 'Trade Type',
+      cell: ({ row }) => (
+        <div className="font-medium">{row.getValue('tradeType')}</div>
       ),
     },
     // {
@@ -176,29 +192,29 @@ const TradeTips = () => {
     //   ),
     // },
     {
-      accessorKey: "duration",
-      header: "Duration",
-      cell: ({ row }) => <div>{row.getValue("duration")}</div>,
+      accessorKey: 'duration',
+      header: 'Duration',
+      cell: ({ row }) => <div>{row.getValue('duration')}</div>,
     },
     {
-      accessorKey: "formattedCreatedAt",
+      accessorKey: 'formattedCreatedAt',
       header: ({ column }) => (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Created At
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ row }) => <div>{row.getValue("formattedCreatedAt")}</div>,
+      cell: ({ row }) => <div>{row.getValue('formattedCreatedAt')}</div>,
     },
     {
-      accessorKey: "active",
-      header: "Status",
+      accessorKey: 'active',
+      header: 'Status',
       cell: ({ row }) => (
         <div>
-          {row.getValue("active") ? (
+          {row.getValue('active') ? (
             <span className="bg-green-100 text-green-800 px-2 py-1 rounded">
               Active
             </span>
@@ -212,7 +228,7 @@ const TradeTips = () => {
     },
 
     {
-      id: "actions",
+      id: 'actions',
       enableHiding: false,
       cell: ({ row }) => {
         const stock = row.original;
@@ -236,76 +252,76 @@ const TradeTips = () => {
     //   placeHolder: 'Email',
     // },
     {
-      col_key: "stockSymbol",
-      filedType: "input",
-      queryKey: "stockSymbol",
-      placeHolder: "Search By Symbol",
+      col_key: 'stockSymbol',
+      filedType: 'input',
+      queryKey: 'stockSymbol',
+      placeHolder: 'Search By Symbol',
     },
     {
-      col_key: "active",
-      queryKey: "active",
-      filedType: "select",
-      placeHolder: "Is Active",
-      defaultLabelValue: "All Active/InActive",
+      col_key: 'active',
+      queryKey: 'active',
+      filedType: 'select',
+      placeHolder: 'Is Active',
+      defaultLabelValue: 'All Active/InActive',
 
       options: [
-        { label: "Active", value: true },
-        { label: "InActive", value: false },
+        { label: 'Active', value: true },
+        { label: 'InActive', value: false },
       ],
     },
     {
-      col_key: "tradeType",
-      queryKey: "tradeType",
-      filedType: "select",
-      placeHolder: "Trade Type",
-      defaultLabelValue: "All Trade Types",
+      col_key: 'tradeType',
+      queryKey: 'tradeType',
+      filedType: 'select',
+      placeHolder: 'Trade Type',
+      defaultLabelValue: 'All Trade Types',
 
       options: [
-        { label: "BUY", value: "BUY" },
-        { label: "SELL", value: "SELL" },
+        { label: 'BUY', value: 'BUY' },
+        { label: 'SELL', value: 'SELL' },
       ],
     },
     {
-      col_key: "exchange",
-      queryKey: "exchange",
-      filedType: "select",
-      placeHolder: "Trade Type",
-      defaultLabelValue: "All Exchanges",
+      col_key: 'exchange',
+      queryKey: 'exchange',
+      filedType: 'select',
+      placeHolder: 'Trade Type',
+      defaultLabelValue: 'All Exchanges',
       options: [
-        { label: "BSE", value: "BSE" },
-        { label: "NSE", value: "NSE" },
+        { label: 'BSE', value: 'BSE' },
+        { label: 'NSE', value: 'NSE' },
       ],
     },
   ];
   const [selectedFilterValues, setSelectedFilterValues] = useState(
     filters.reduce((acc, filter) => {
-      if (filter.filedType === "select") {
-        acc[filter.col_key] = "All";
+      if (filter.filedType === 'select') {
+        acc[filter.col_key] = 'All';
       }
       return acc;
     }, {})
   );
   const handleFilterChange = (filteredValues, value) => {
-    setSelectedFilterValues((prev) => ({
+    setSelectedFilterValues(prev => ({
       ...prev,
       [filteredValues.col_key]: value,
     }));
     if (
-      (filteredValues.filedType === "select" && value === "All") ||
-      (filteredValues.filedType === "input" && value === "")
+      (filteredValues.filedType === 'select' && value === 'All') ||
+      (filteredValues.filedType === 'input' && value === '')
     ) {
       const { [filteredValues.queryKey]: value, ...newSearchQueryParams } =
         searchQueryParams;
       setSearchQueryParams(newSearchQueryParams);
     } else {
-      setSearchQueryParams((prev) => {
+      setSearchQueryParams(prev => {
         return {
           ...prev,
           [filteredValues.queryKey]: value,
         };
       });
     }
-    setPagination((prev) => {
+    setPagination(prev => {
       return {
         ...prev,
         currentPage: 1,
@@ -331,37 +347,37 @@ const TradeTips = () => {
           <Input
             placeholder="Search Trade Tips"
             value={searchInput}
-            onChange={(e) => onHandleSearch(e.target.value)}
+            onChange={e => onHandleSearch(e.target.value)}
             className="max-w-sm"
           />
-          {filters.map((filter) =>
-            filter.filedType === "select" ? (
+          {filters.map(filter =>
+            filter.filedType === 'select' ? (
               <>
-              <Select
-                key={filter.col_key}
-                value={selectedFilterValues[filter.col_key]}
-                onValueChange={(value) => handleFilterChange(filter, value)}
-              >
-                <SelectTrigger className="max-w-52">
-                  <SelectValue placeholder={filter.placeHolder} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="All" >
-                    {filter.defaultLabelValue || "All"}
-                  </SelectItem>
-                  {filter.options.map((option) => (
-                    <SelectItem key={option.value} value={option.value} > 
-                      {option.label}
+                <Select
+                  key={filter.col_key}
+                  value={selectedFilterValues[filter.col_key]}
+                  onValueChange={value => handleFilterChange(filter, value)}
+                >
+                  <SelectTrigger className="max-w-52">
+                    <SelectValue placeholder={filter.placeHolder} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All">
+                      {filter.defaultLabelValue || 'All'}
                     </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                    {filter.options.map(option => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </>
             ) : (
               <Input
                 key={filter.col_key}
                 placeholder={filter.placeHolder}
-                onChange={(e) => handleFilterChange(filter, e.target.value)}
+                onChange={e => handleFilterChange(filter, e.target.value)}
                 className="max-w-sm"
               />
             )

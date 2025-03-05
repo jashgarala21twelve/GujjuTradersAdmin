@@ -268,6 +268,12 @@ export const sidebarMenus = {
       path: '/coupons',
       icon: Tag,
     },
+    {
+      key: 'coupons-create',
+      name: 'Create Coupon',
+      path: '/coupons/create',
+      icon: Tag,
+    },
   ],
   referrals: [
     {

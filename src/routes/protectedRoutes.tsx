@@ -9,6 +9,8 @@ const Users = lazy(() => import('@/pages/users'));
 
 // Coupons Management
 const Coupons = lazy(() => import('@/pages/coupons'));
+const CreateCoupon = lazy(() => import('@/pages/coupons/create'));
+const UpdateCoupon = lazy(() => import('@/pages/coupons/update'));
 
 // Referrals
 const Referrals = lazy(() => import('@/pages/referrals'));
@@ -36,12 +38,12 @@ const SocialLinks = lazy(() => import('@/pages/sociallinks'));
 
 // Subscription Plans
 const Plans = lazy(() => import('@/pages/plans'));
+const CreatePlan = lazy(() => import('@/pages/plans/create'));
+const UpdatePlan = lazy(() => import('@/pages/plans/update'));
 
 const Settings = lazy(() => import('@/pages/settings'));
 
 const User = lazy(() => import('@/pages/user'));
-const CreatePlan = lazy(() => import('@/pages/plans/create'));
-const UpdatePlan = lazy(() => import('@/pages/plans/update'));
 
 // Define Routes
 // const ProtectedRoutes: RouteObject[] = [
@@ -79,6 +81,9 @@ const ProtectedRoutes: RouteObject[] = [
   { path: '/users', element: <Users /> },
   { path: '/users/:userId', element: <User /> },
   { path: '/coupons', element: <Coupons /> },
+  { path: '/coupons/create', element: <CreateCoupon /> },
+  { path: '/coupons/view/:couponId', element: <UpdateCoupon /> },
+
   { path: '/referrals', element: <Referrals /> },
   { path: '/news', element: <News /> },
   { path: '/news/category', element: <NewsCategory /> },

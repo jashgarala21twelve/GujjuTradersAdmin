@@ -42,8 +42,9 @@ const tradeTipSchema = z.object({
     .min(1, 'At least one target is required'),
   stockLogo: z.any().optional(),
   deleteStockLogo: z.boolean().optional(),
-  planId: z.number(),
+
   plans: z.array(z.string()),
+  freeTip: z.boolean(),
 });
 
 interface ImageState {
@@ -83,6 +84,7 @@ const CreateTradeTip = () => {
     register,
     handleSubmit,
     setValue,
+    unregister,
 
     control,
     formState: { errors },
@@ -102,8 +104,8 @@ const CreateTradeTip = () => {
       duration: '',
       targets: [''],
       deleteStockLogo: false,
-      planId: 1,
       plans: [],
+      freeTip: false,
     },
   });
 
@@ -112,6 +114,7 @@ const CreateTradeTip = () => {
     name: 'targets',
   });
   const [plans, setPlans] = useState([]);
+  const [isFreeTip, setIsFreeTip] = useState(false);
   useEffect(() => {
     mutate({ symbol });
   }, [symbol, mutate]);
@@ -498,16 +501,40 @@ const CreateTradeTip = () => {
               name="plans"
               control={control}
               render={({ field }) => (
-                <div className="mb-6">
-                  <label className="block text-sm font-medium mb-3">
-                    Subscription Plans
-                  </label>
+                <div className="mb-6 ">
+                  <div className="flex items-center mb-3 gap-5">
+                    <label className="block text-sm font-medium ">
+                      Subscription Plans
+                    </label>
+                    <div>
+                      <Controller
+                        name="freeTip"
+                        control={control}
+                        render={({ field }) => (
+                          <div className="flex items-center space-x-2">
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={(checked: boolean) => {
+                                if (checked) {
+                                  unregister('plans');
+                                  setValue('plans', []);
+                                }
+                                setIsFreeTip(checked);
+                                field.onChange(checked);
+                              }}
+                            />
+                            <label>Free Tip</label>
+                          </div>
+                        )}
+                      />
+                    </div>
+                  </div>
                   <div className=" border rounded-lg shadow-sm overflow-hidden">
                     {plans?.map(plan => (
                       <label
                         key={plan._id}
                         htmlFor={`plan-${plan._id}`}
-                        className="flex items-center justify-between p-4 border-b transition-colors cursor-pointer "
+                        className={`flex items-center justify-between p-4 border-b transition-colors cursor-pointer `}
                       >
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
@@ -542,6 +569,7 @@ const CreateTradeTip = () => {
 
                         <div>
                           <Checkbox
+                            disabled={isFreeTip}
                             id={`plan-${plan._id}`}
                             checked={field.value?.includes(plan._id)}
                             onCheckedChange={checked => {

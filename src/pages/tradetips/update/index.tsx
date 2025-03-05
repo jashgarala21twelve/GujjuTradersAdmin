@@ -19,13 +19,12 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import Toast from '@/components/toast/commonToast';
-import {
-  useGetTradeTip,
-  useUpdateTradeTip,
-} from '@/hooks/api/tradetips';
+import { useGetTradeTip, useUpdateTradeTip } from '@/hooks/api/tradetips';
 import { convertToFormData } from '@/utils/helper';
 import dayjs from 'dayjs';
 import { TRADE_TYPE } from '@/utils/constants';
+import { useGetActivePlans } from '@/hooks/api/plans';
+import { Checkbox } from '@/components/ui/checkbox';
 // Define Schema
 const tradeTipSchema = z.object({
   entryRange: z.string().nonempty('Entry Range is required'),
@@ -44,7 +43,8 @@ const tradeTipSchema = z.object({
     .min(1, 'At least one target is required'),
   stockLogo: z.any().optional(),
   deleteStockLogo: z.boolean().optional(),
-  planId: z.number(),
+  plans: z.array(z.string()),
+  freeTip: z.boolean(),
 });
 
 interface ImageState {
@@ -69,7 +69,8 @@ const UpdateTradeTip = () => {
     Toast('success', data?.message || 'Trade Tip Updated Successfully');
     refetchTradeTip();
   };
-
+  const { data: activePlansResponse, isPending: activePlansPending } =
+    useGetActivePlans();
   const { mutate: updateTradeTip, isPending: updateTradeTipPending } =
     useUpdateTradeTip(onSuccessTradeTipUpdate);
   const [imageState, setImageState] = useState<ImageState>({
@@ -83,7 +84,7 @@ const UpdateTradeTip = () => {
     register,
     handleSubmit,
     setValue,
-
+    unregister,
     control,
     reset,
     formState: { errors },
@@ -103,7 +104,8 @@ const UpdateTradeTip = () => {
       duration: '',
       targets: [''],
       deleteStockLogo: false,
-      planId: 1,
+      plans: [],
+      freeTip: false,
     },
   });
 
@@ -111,6 +113,9 @@ const UpdateTradeTip = () => {
     control,
     name: 'targets',
   });
+
+  const [isFreeTip, setIsFreeTip] = useState(false);
+  const [plans, setPlans] = useState([]);
 
   useEffect(() => {
     if (tradeTipResponse?.data) {
@@ -161,9 +166,10 @@ const UpdateTradeTip = () => {
         description: tipData.description || '',
         active: tipData.active || false,
         targets: tipData.targets || [''],
-        planId: 1,
+        plans: tipData.plans || [],
+        freeTip: tipData.freeTip || false,
       });
-
+      setIsFreeTip(tipData?.freeTip);
       if (tipData.stockLogo) {
         setImageState({
           currentImage: tipData.stockLogo,
@@ -174,6 +180,13 @@ const UpdateTradeTip = () => {
       }
     }
   }, [tradeTipResponse, setValue, reset]);
+
+  useEffect(() => {
+    if (activePlansResponse) {
+      const { data } = activePlansResponse;
+      setPlans(data);
+    }
+  }, [activePlansResponse]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -450,6 +463,100 @@ const UpdateTradeTip = () => {
                 className="h-24"
               />
             </div>
+
+            <Controller
+              name="plans"
+              control={control}
+              render={({ field }) => (
+                <div className="mb-6 ">
+                  <div className="flex items-center mb-3 gap-5">
+                    <label className="block text-sm font-medium ">
+                      Subscription Plans
+                    </label>
+                    <div>
+                      <Controller
+                        name="freeTip"
+                        control={control}
+                        render={({ field }) => (
+                          <div className="flex items-center space-x-2">
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={(checked: boolean) => {
+                                if (checked) {
+                                  unregister('plans');
+                                  setValue('plans', []);
+                                }
+                                setIsFreeTip(checked);
+                                field.onChange(checked);
+                              }}
+                            />
+                            <label>Free Tip</label>
+                          </div>
+                        )}
+                      />
+                    </div>
+                  </div>
+                  <div className=" border rounded-lg shadow-sm overflow-hidden">
+                    {plans?.map(plan => (
+                      <label
+                        key={plan._id}
+                        htmlFor={`plan-${plan._id}`}
+                        className={`flex items-center justify-between p-4 border-b transition-colors cursor-pointer `}
+                      >
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-medium ">{plan?.name}</h3>
+                            <span className=" text-xs px-2 py-0.5 rounded-full">
+                              {plan?.planKey}
+                            </span>
+                          </div>
+
+                          <div className="mt-1 flex items-center gap-4 text-sm ">
+                            <div className="flex items-center">
+                              <span className="font-semibold ">
+                                ₹{plan?.price?.monthly}
+                              </span>
+                              <span className="ml-1">/ month</span>
+                            </div>
+
+                            <div className="flex items-center">
+                              <span className="font-semibold ">
+                                ₹{plan?.price?.yearly}
+                              </span>
+                              <span className="ml-1">/ year</span>
+                            </div>
+
+                            {plan?.price?.discount > 0 && (
+                              <div className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">
+                                {plan?.price?.discount}% off
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div>
+                          <Checkbox
+                            disabled={isFreeTip}
+                            id={`plan-${plan._id}`}
+                            checked={field.value?.includes(plan._id)}
+                            onCheckedChange={checked => {
+                              return checked
+                                ? field.onChange([...field.value, plan._id])
+                                : field.onChange(
+                                    field.value?.filter(
+                                      value => value !== plan._id
+                                    )
+                                  );
+                            }}
+                            className="h-5 w-5 text-blue-600"
+                          />
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+            />
 
             {/* Active Status Section */}
             <Controller
