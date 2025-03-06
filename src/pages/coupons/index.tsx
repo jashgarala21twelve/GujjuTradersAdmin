@@ -107,7 +107,7 @@ const Coupons = () => {
       ),
       cell: ({ row }) => (
         <div>
-          <CopyToClipboard text={row.getValue('_id') }    />
+          <CopyToClipboard text={row.getValue('_id')} />
         </div>
       ),
     },
@@ -116,7 +116,10 @@ const Coupons = () => {
       accessorKey: 'couponCode',
       header: 'Coupon Code',
       cell: ({ row }) => (
-        <div className="font-extrabold">{row.getValue('couponCode')}</div>
+        <div className="font-md bg-primary text-white rounded-md w-max px-2">
+          {' '}
+          <CopyToClipboard text={row.getValue('couponCode')} />
+        </div>
       ),
     },
 

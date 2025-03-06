@@ -9,10 +9,10 @@
       and you can keep white as the background or tweak it. 
       The background circle color can be used for accent or ring, etc.
     */
-    
-    --background: 0 0% 100%;              /* White background */
-    --foreground: 222.2 84% 4.9%;         /* Very dark text */
-    
+
+    --background: 0 0% 100%; /* White background */
+    --foreground: 222.2 84% 4.9%; /* Very dark text */
+
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
@@ -22,22 +22,22 @@
       Primary: Teal from the bull side 
       (approx hsl(173, 58%, 39%) from your chart-2)
     */
-    --primary: 173 58% 39%;              
-    --primary-foreground: 210 40% 98%;    /* Light text on teal */
+    --primary: 173 58% 39%;
+    --primary-foreground: 210 40% 98%; /* Light text on teal */
 
     /* 
       Secondary: Pinkish/red from the bear side
       Approx hsl(350, 57%, 62%)
     */
     --secondary: 350 57% 62%;
-    --secondary-foreground: 210 40% 98%;  /* Light text on pink */
+    --secondary-foreground: 210 40% 98%; /* Light text on pink */
 
     /* Muted can be a very light grey, or near white */
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
     /* Accent: you can choose the dark blue circle color here if you want */
-    --accent: 215 74% 30%;               /* Dark blue from the circle */
+    --accent: 215 74% 30%; /* Dark blue from the circle */
     --accent-foreground: 210 40% 98%;
 
     /* Destructive, border, input, ring, etc. can be chosen as well */
@@ -45,15 +45,15 @@
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 173 58% 39%;  /* Same as primary or use pink, your choice */
+    --ring: 173 58% 39%; /* Same as primary or use pink, your choice */
     --radius: 0.5rem;
 
     /* You can keep or adjust chart colors to match your brand palette */
-    --chart-1: 350 57% 62%;   /* Pink/red */
-    --chart-2: 173 58% 39%;   /* Teal */
-    --chart-3: 215 74% 30%;   /* Dark blue */
-    --chart-4: 43 74% 66%;    /* Another accent, if needed */
-    --chart-5: 27 87% 67%;    /* Another accent, if needed */
+    --chart-1: 350 57% 62%; /* Pink/red */
+    --chart-2: 173 58% 39%; /* Teal */
+    --chart-3: 215 74% 30%; /* Dark blue */
+    --chart-4: 43 74% 66%; /* Another accent, if needed */
+    --chart-5: 27 87% 67%; /* Another accent, if needed */
 
     /* Sidebar colors, updated to the brand palette if you like */
     --sidebar-background: 0 0% 98%;
@@ -81,7 +81,7 @@
       Dark mode adjustments: 
       Keep the overall logic but invert backgrounds/foregrounds.
     */
-    --background: 222.2 84% 4.9%;         
+    --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
 
     --card: 222.2 84% 4.9%;
@@ -146,7 +146,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: "Inter", sans-serif;
+    font-family: 'Inter', sans-serif;
   }
 }
 
@@ -205,4 +205,24 @@
 .animate-gradient {
   background-size: 200% 200%;
   animation: gradientShift 3s ease infinite;
+}
+
+input[type='date']::-webkit-calendar-picker-indicator {
+  filter: invert(32%) sepia(60%) saturate(350%) hue-rotate(150deg);
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+input[type='date']:focus::-webkit-calendar-picker-indicator {
+  filter: invert(40%) sepia(80%) saturate(400%) hue-rotate(360deg);
+  opacity: 1;
+}
+
+/* Dark Mode */
+.dark input[type='date']::-webkit-calendar-picker-indicator {
+  filter: invert(60%) sepia(90%) saturate(500%) hue-rotate(180deg);
+}
+
+.dark input[type='date']:focus::-webkit-calendar-picker-indicator {
+  filter: invert(70%) sepia(100%) saturate(600%) hue-rotate(360deg);
 }
