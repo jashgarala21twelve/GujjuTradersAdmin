@@ -117,7 +117,6 @@ const Coupons = () => {
       header: 'Coupon Code',
       cell: ({ row }) => (
         <div className="font-md bg-primary text-white rounded-md w-max px-2">
-          {' '}
           <CopyToClipboard text={row.getValue('couponCode')} />
         </div>
       ),

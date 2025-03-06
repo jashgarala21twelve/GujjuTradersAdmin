@@ -15,6 +15,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useGetPlans } from '@/hooks/api/plans'; // Make sure you create this hook
 import { useTableFilters } from '@/hooks/useTableFilters';
+import CopyToClipboard from '@/components/copyToClipBoard';
 
 const Plans = () => {
   const [data, setData] = useState([]);
@@ -127,7 +128,12 @@ const Plans = () => {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ row }) => <div>{row.getValue('_id')}</div>,
+      cell: ({ row }) => (
+        <div>
+          {' '}
+          <CopyToClipboard text={row.getValue('_id')} />
+        </div>
+      ),
     },
     {
       accessorKey: 'planKey',
