@@ -78,7 +78,8 @@ const TradeTips = () => {
   const onSuccessTradeTipUpdate = () => {
     refetch();
   };
-  const { mutate: updateTradeTip } = useUpdateTradeTip(onSuccessTradeTipUpdate);
+  const { mutate: updateTradeTip, isPending: updateTradeTipPending } =
+    useUpdateTradeTip(onSuccessTradeTipUpdate);
 
   const handleActiveInactiveTradeTip = (
     tradeTipId: string,
@@ -267,12 +268,16 @@ const TradeTips = () => {
         const stock = row.original;
         return (
           <div className="flex w-full items-center ">
-            <Link
-              to={`/tradetips/view/${stock._id}`}
-              className="hover:underline"
-            >
-              View
-            </Link>
+            {updateTradeTipPending ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Link
+                to={`/tradetips/view/${stock._id}`}
+                className="hover:underline"
+              >
+                View
+              </Link>
+            )}
           </div>
         );
       },
