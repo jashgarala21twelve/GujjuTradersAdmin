@@ -13,7 +13,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useTradeTipsList } from '@/hooks/api/tradetips';
+import { Switch } from '@/components/ui/switch';
+import { useTradeTipsList, useUpdateTradeTip } from '@/hooks/api/tradetips';
+import { convertToFormData } from '@/utils/helper';
 import { ColumnDef } from '@tanstack/react-table';
 import { debounce } from 'lodash';
 import { ArrowUpDown, Loader2 } from 'lucide-react';
@@ -72,6 +74,20 @@ const TradeTips = () => {
         currentPage: page,
       };
     });
+  };
+  const onSuccessTradeTipUpdate = () => {
+    refetch();
+  };
+  const { mutate: updateTradeTip } = useUpdateTradeTip(onSuccessTradeTipUpdate);
+
+  const handleActiveInactiveTradeTip = (
+    tradeTipId: string,
+    active: boolean
+  ) => {
+    const formData = convertToFormData({
+      active,
+    });
+    updateTradeTip({ tradeTipId, data: formData });
   };
   const debouncedSearch = useCallback(
     debounce(value => {
@@ -226,7 +242,24 @@ const TradeTips = () => {
         </div>
       ),
     },
-
+    {
+      id: 'Active',
+      header: 'Active / In Active',
+      cell: ({ row }) => {
+        const active = row.getValue('active');
+        const _id = row.getValue('_id');
+        return (
+          <div className="flex w-full items-center ">
+            <Switch
+              checked={active}
+              onCheckedChange={value => {
+                handleActiveInactiveTradeTip(_id, value);
+              }}
+            />
+          </div>
+        );
+      },
+    },
     {
       id: 'actions',
       enableHiding: false,
