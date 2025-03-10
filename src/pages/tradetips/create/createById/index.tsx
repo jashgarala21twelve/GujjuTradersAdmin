@@ -31,6 +31,11 @@ const tradeTipSchema = z.object({
   description: z.string().optional(),
   tradeType: z.enum(['BUY', 'SELL']),
   tradeTerm: z.enum(['1', '2', '3']),
+  potentialReturn: z
+    .string({
+      invalid_type_error: 'Potential Return must be a string',
+    })
+    .optional(),
   active: z.boolean(),
   stockId: z.string().nonempty('Stock ID is required'),
   stockSymbol: z.string().nonempty('Stock Symbol is required'),
@@ -106,6 +111,7 @@ const CreateTradeTip = () => {
       deleteStockLogo: false,
       plans: [],
       freeTip: false,
+      potentialReturn: '',
     },
   });
 
@@ -331,6 +337,16 @@ const CreateTradeTip = () => {
               )}
             </div>
 
+            {/* Potential Return */}
+            <div>
+              <label className="block mb-2">Potential Return</label>
+              <Input {...register('potentialReturn')} placeholder="e.g., 12%" />
+              {errors.potentialReturn && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.potentialReturn.message}
+                </p>
+              )}
+            </div>
             {/* Stock Logo Section */}
             <div>
               <label className="block mb-2">Stock Logo</label>

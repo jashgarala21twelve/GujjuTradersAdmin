@@ -1,19 +1,19 @@
-import { useState } from "react";
-import { m } from "framer-motion";
-import { ChevronDown, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useLocation, Link } from "react-router-dom";
+import { useState } from 'react';
+import { m } from 'framer-motion';
+import { ChevronDown, ChevronRight } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useLocation, Link } from 'react-router-dom';
 
 const Submenu = ({ items, isOpen, currentPath }) => (
   <m.div
     initial={{ height: 0, opacity: 0 }}
-    animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
+    animate={{ height: isOpen ? 'auto' : 0, opacity: isOpen ? 1 : 0 }}
     exit={{ height: 0, opacity: 0 }}
-    transition={{ duration: 0.3, ease: "easeInOut" }}
+    transition={{ duration: 0.3, ease: 'easeInOut' }}
     className="overflow-hidden"
   >
     <div className="ml-3 mt-1 space-y-2">
-      {items.map((item) => (
+      {items.map(item => (
         <SidebarMenu key={item.key} item={item} currentPath={currentPath} />
       ))}
     </div>
@@ -22,10 +22,10 @@ const Submenu = ({ items, isOpen, currentPath }) => (
 const SidebarItem = ({ title, icon: Icon, onClick, isOpen, isActive }) => (
   <button
     className={cn(
-      "flex w-full items-center justify-between p-2 text-left rounded-md transition-all duration-200",
+      'flex w-full items-center justify-between p-2 text-left rounded-md transition-all duration-200',
       isActive
-        ? "bg-primary text-white"
-        : "hover:bg-secondary dark:hover:bg-gray-800"
+        ? 'bg-primary text-white'
+        : 'hover:bg-secondary dark:hover:bg-gray-800'
     )}
     onClick={onClick}
   >
@@ -54,7 +54,7 @@ const SidebarMenu = ({ item, currentPath }) => {
         <>
           <SidebarItem
             title={item.name}
-            icon={item.icon}  
+            icon={item.icon}
             onClick={() => setIsOpen(!isOpen)}
             isOpen={isOpen}
             isActive={isActive}
@@ -79,7 +79,7 @@ const Sidebar = ({ menuItems }) => {
 
   return (
     <div className="w-64 bg-white dark:bg-gray-950 p-4 h-screen overflow-y-auto border-r">
-      {menuItems.map((item) => (
+      {menuItems.map(item => (
         <SidebarMenu
           key={item.key}
           item={item}
