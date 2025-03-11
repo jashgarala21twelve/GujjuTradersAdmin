@@ -8,7 +8,13 @@ import {
 
 const TRADE_TIP_QUERY_KEY = ["tradetip", "search"];
 export const useCreateTradeTip = (onSuccessHandler) => {
- c
+  return useMutation({
+    mutationFn: createTradeTip,
+    retry: false,
+    onSuccess: (data) => {
+      onSuccessHandler(data);
+    },
+  });
 };
 
 export const useUpdateTradeTip = (onSuccessHandler) => {
