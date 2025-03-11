@@ -47,6 +47,7 @@ export const request = async (
       data,
       ...config,
     });
+    console.log('response.data', response.data)
     return response.data;
   } catch (error) {
 
