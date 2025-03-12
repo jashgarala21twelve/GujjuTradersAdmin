@@ -12,6 +12,9 @@ const Coupons = lazy(() => import('@/pages/coupons'));
 const CreateCoupon = lazy(() => import('@/pages/coupons/create'));
 const UpdateCoupon = lazy(() => import('@/pages/coupons/update'));
 
+//NewsCategory Mangement
+const CreateNewsCategory = lazy(() => import('@/pages/newscategory/create'));
+
 // Referrals
 const Referrals = lazy(() => import('@/pages/referrals'));
 
@@ -93,6 +96,7 @@ const ProtectedRoutes: RouteObject[] = [
   { path: '/tradetips/create/:symbol', element: <CreateTradeTip /> },
   { path: '/tradetips/view/:tradeTipId', element: <UpdateTradeTip /> },
   { path: '/social-links', element: <SocialLinks /> },
+  { path: '/news/category/create', element: <CreateNewsCategory />},
   // { path: '/media-assets', element: <MediaAssets /> },
   { path: '/plans', element: <Plans /> },
   { path: '/plans/create', element: <CreatePlan /> },
