@@ -18,8 +18,8 @@ import { useNavigate } from 'react-router-dom';
 import { onFormErrors } from '@/utils/helper';
 
 import React from 'react'
-import { useCategory } from '@/hooks/api/newsCategory'
 import Toast from '@/components/toast/commonToast';
+import { useCreateCategory } from '@/hooks/api/newsCategory';
 
 const createCategorySchema = z.object({
     name: z.string({ required_error: 'Category Name is required' })
@@ -35,7 +35,7 @@ function CreateCategory() {
         Toast('success', data?.message || 'Category Created Successfully');
         navigate('/news/category');
     };
-    const { mutate: createcategory, isPending: isCreateCategory } = useCategory(onSuccessCreateCategory);
+    const { mutate: createcategory, isPending: isCreateCategory } = useCreateCategory(onSuccessCreateCategory);
 
     //   const { mutate: createcategory , isPending: isCreateCategory } =
     //       useCategory(onSuccessCreateCategory);

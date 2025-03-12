@@ -1,3 +1,5 @@
+import { CreateNews } from '@/pages/news/create';
+import { EditViewNews } from '@/pages/news/view';
 import ViewNewCategory from '@/pages/newscategory/view';
 import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
@@ -90,6 +92,8 @@ const ProtectedRoutes: RouteObject[] = [
 
   { path: '/referrals', element: <Referrals /> },
   { path: '/news', element: <News /> },
+  { path: '/news/create', element: <CreateNews /> },
+  { path: '/news/view/:id', element: <EditViewNews /> },
   { path: '/news/category', element: <NewsCategory /> },
   { path: '/faq', element: <FAQ /> },
   { path: '/tradetips', element: <TradeTips /> },
@@ -97,7 +101,7 @@ const ProtectedRoutes: RouteObject[] = [
   { path: '/tradetips/create/:symbol', element: <CreateTradeTip /> },
   { path: '/tradetips/view/:tradeTipId', element: <UpdateTradeTip /> },
   { path: '/social-links', element: <SocialLinks /> },
-  { path: '/news/category/create', element: <CreateNewsCategory />},
+  { path: '/news/category/create', element: <CreateNewsCategory /> },
   { path: '/news/category/view/:id', element: <ViewNewCategory /> },
   // { path: '/media-assets', element: <MediaAssets /> },
   { path: '/plans', element: <Plans /> },

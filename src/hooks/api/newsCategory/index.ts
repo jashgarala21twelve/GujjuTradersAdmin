@@ -34,3 +34,13 @@ export const useUpdateNewCategory = (onSuccessHandler: any) => {
     },
   });
 };
+
+export const useCreateCategory = (onSuccessHandler: any) => {
+  return useMutation({
+    mutationFn: CreateCategory,
+    retry: false,
+    onSuccess: (data) => {
+      onSuccessHandler(data);
+    },
+  });
+};
