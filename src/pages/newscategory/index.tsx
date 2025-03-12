@@ -14,12 +14,12 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTableFilters } from '@/hooks/useTableFilters';
 import CopyToClipboard from '@/components/copyToClipBoard';
-import { Loader2 } from "lucide-react";
+import { Loader2 } from 'lucide-react';
 
-import { useCategory, getNewsCategory, useNews } from '@/hooks/api/news'
+import { useGetNewsCategory } from '@/hooks/api/newsCategory';
 
 const NewsCategory = () => {
-  const [data, setData] = useState([])
+  const [data, setData] = useState([]);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     perPage: 10,
@@ -27,7 +27,13 @@ const NewsCategory = () => {
     totalCount: null,
   });
 
-  const { data: apiResponse, isLoading, isError, isSuccess, refetch } = getNewsCategory()
+  const {
+    data: apiResponse,
+    isLoading,
+    isError,
+    isSuccess,
+    refetch,
+  } = useGetNewsCategory();
 
   const {
     search,
@@ -43,16 +49,16 @@ const NewsCategory = () => {
     if (apiResponse) {
       const { data: Data } = apiResponse;
       // console.log("dosinvsiikvneroievnbewi", Data)
-      setData(Data)
+      setData(Data);
     }
-  }, [apiResponse])
+  }, [apiResponse]);
 
   const columns = [
     {
       accessorKey: '_id',
       header: 'ID',
-      cell: ({ row }) => (
-        <div className="font-md text-white rounded-md w-max px-2">
+      cell: ({ row }: any) => (
+        <div className='font-md text-white rounded-md w-max px-2'>
           {row.getValue('_id')}
         </div>
       ),
@@ -60,58 +66,68 @@ const NewsCategory = () => {
     {
       accessorKey: 'name',
       header: 'Name',
-      cell: ({ row }) => (
-        <div className="font-md text-white  rounded-md w-max px-2">
+      cell: ({ row }: any) => (
+        <div className='font-md text-white  rounded-md w-max px-2'>
           {row.getValue('name')}
         </div>
       ),
     },
-  ]
-
-
-
-  if (isLoading) {
-    return <>
-      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-      Fetching News...
-    </>
-  };
-  if (isError) return <div>Error loading categories.</div>;
-
-
-  return <div>
-    <PageTitle title="Coupons Management" />
-    <div className="border rounded-xl p-4 flex flex-col min-h-[700px]">
-      <div className="flex justify-between mb-4 gap-2">
-        <div className="grid grid-cols-7 gap-3 flex-1">
-          <Input
-            placeholder="Search Coupons"
-            value={searchInput}
-            onChange={e => handleSearchChange(e.target.value)}
-            className="max-w-sm"
-          />
-        </div>
-
-        <Button asChild>
-                    <Link to="/news/category/create">Create New Category</Link>
-        </Button>
-        </div>
-        
-        {isError && (
-          <div className="flex flex-1 items-center justify-center">
-            <p className="text-red-500">Error fetching News data</p>
+    {
+      id: 'actions',
+      header: 'Actions',
+      enableHiding: false,
+      cell: ({ row }: any) => {
+        const news = row.original;
+        return (
+          <div className='flex w-full gap-2'>
+            <Link
+              to={`/news/category/view/${news._id}`}
+              className='hover:underline'
+            >
+              View
+            </Link>
           </div>
-        )}
-        {isSuccess && (
-          <DynamicDataTable
-            data={data}
-            columns={columns}
-          />
-        )}
+        );
+      },
+    },
+  ];
+
+  return (
+    <div>
+      {isLoading ? (
+        <div className='flex justify-center items-center h-screen'>
+          <Loader2 size={40} className='animate-spin text-[#2A9D90]' />
+        </div>
+      ) : (
+        <>
+          <PageTitle title='News Category List' />
+          <div className='border rounded-xl p-4 flex flex-col min-h-[700px]'>
+            <div className='flex justify-between mb-4 gap-2'>
+              <div className='grid grid-cols-7 gap-3 flex-1'>
+                <Input
+                  placeholder='Search Coupons'
+                  value={searchInput}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  className='max-w-sm'
+                />
+              </div>
+
+              <Button asChild>
+                <Link to='/news/category/create'>Create New Category</Link>
+              </Button>
+            </div>
+
+            {isError && (
+              <div className='flex flex-1 items-center justify-center'>
+                <p className='text-red-500'>Error fetching News data</p>
+              </div>
+            )}
+            {isSuccess && <DynamicDataTable data={data} columns={columns} />}
+          </div>
+        </>
+      )}
     </div>
-  </div>;
+  );
 };
-
-
 
 export default NewsCategory;

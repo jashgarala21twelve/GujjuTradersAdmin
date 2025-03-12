@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import { onFormErrors } from '@/utils/helper';
 
 import React from 'react'
-import { useCategory } from '@/hooks/api/news'
+import { useCategory } from '@/hooks/api/newsCategory'
 import Toast from '@/components/toast/commonToast';
 
 const createCategorySchema = z.object({
