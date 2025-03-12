@@ -1,3 +1,4 @@
+import ViewNewCategory from '@/pages/newscategory/view';
 import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
 
@@ -97,6 +98,7 @@ const ProtectedRoutes: RouteObject[] = [
   { path: '/tradetips/view/:tradeTipId', element: <UpdateTradeTip /> },
   { path: '/social-links', element: <SocialLinks /> },
   { path: '/news/category/create', element: <CreateNewsCategory />},
+  { path: '/news/category/view/:id', element: <ViewNewCategory /> },
   // { path: '/media-assets', element: <MediaAssets /> },
   { path: '/plans', element: <Plans /> },
   { path: '/plans/create', element: <CreatePlan /> },
