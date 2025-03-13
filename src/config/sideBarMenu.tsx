@@ -204,18 +204,6 @@ export const sidebarMenus = {
       icon: LayoutDashboardIcon,
       title: 'DashBoard',
     },
-    // {
-    //   key: "dashboard-completed",
-    //   name: "Completed Jobs",
-    //   path: "/completed-jobs",
-    //   icon: CheckCircleIcon,
-    // },
-    // {
-    //   key: "dashboard-cab-history",
-    //   name: "Cab History",
-    //   path: "/cabhistory",
-    //   icon: CarIcon,
-    // },
   ],
   users: [
     {
@@ -225,40 +213,6 @@ export const sidebarMenus = {
       icon: Users,
       title: 'Users',
     },
-    // {
-    //   key: 'jobs-complete',
-    //   name: 'Complete Jobs',
-    //   path: '/jobs/completed',
-    //   icon: CheckCircleIcon,
-    // },
-    // {
-    //   key: 'jobs-search',
-    //   name: 'Search Jobs',
-    //   path: '/jobs/search',
-    //   icon: Search,
-    // },
-    // {
-    //   key: 'jobs-custom-component',
-    //   name: 'Custom Component',
-    //   component: (
-    //     <div className="py-2">
-    //       <div className="flex flex-wrap  space-x-3 ">
-    //         <Button size="sm" variant="outline">
-    //           <Plus className="w-4 h-4 " />
-    //         </Button>
-    //         <Button size="sm" variant="outline">
-    //           <RefreshCcw className="w-4 h-4 " />
-    //         </Button>
-    //         <Button size="sm" variant="outline">
-    //           <Search className="w-4 h-4 " />
-    //         </Button>
-    //         <Button size="sm" variant="outline">
-    //           <Settings className="w-4 h-4 " />
-    //         </Button>
-    //       </div>
-    //     </div>
-    //   ),
-    // },
   ],
   coupons: [
     {
@@ -357,149 +311,20 @@ export const sidebarMenus = {
       title: 'Admin Settings',
     },
   ],
-  // accounting: [
-  //   {
-  //     key: 'accounting-main',
-  //     name: 'Accounts',
-  //     path: '/accounts',
-  //     icon: PersonStandingIcon,
-  //     title: 'Accounts',
-  //   },
-  //   {
-  //     key: 'accounting-statements',
-  //     name: 'Account Statements',
-  //     path: '/accounts/statements',
-  //     icon: PersonStandingIcon,
-  //   },
-  //   {
-  //     key: 'accounting-general-ledger',
-  //     name: 'General Ledger',
-  //     path: '/accounts/ledger',
-  //     icon: PersonStandingIcon,
-  //   },
-  //   {
-  //     key: 'accounting-supplier-payment',
-  //     name: 'Supplier Payment',
-  //     path: '/accounts/supplier-payment',
-  //     icon: PersonStandingIcon,
-  //   },
-  //   {
-  //     key: 'accounting-invoices',
-  //     name: 'Invoices',
-  //     path: '/accounts/invoices',
-  //     icon: PersonStandingIcon,
-  //   },
-  //   {
-  //     key: 'accounting-expenses',
-  //     name: 'Account Expenses',
-  //     path: '/accounts/expenses',
-  //     icon: PersonStandingIcon,
-  //   },
-  // ],
-  // inventory: [
-  //   {
-  //     key: 'inventory-main',
-  //     name: 'Inventory',
-  //     icon: SettingsIcon,
-  //     children: [
-  //       {
-  //         key: 'inventory-used-spare',
-  //         name: 'Used Spare Parts',
-  //         path: '/inventory/used',
-  //         icon: PenToolIcon,
-  //       },
-  //       {
-  //         key: 'inventory-new-spare',
-  //         name: 'New Spare Parts',
-  //         path: '/inventory/new',
-  //         icon: PenToolIcon,
-  //       },
-  //       {
-  //         key: 'inventory-spare-return',
-  //         name: 'Spare Parts Return',
-  //         icon: PlusIcon,
-  //         children: [
-  //           {
-  //             key: 'inventory-new-spare-return',
-  //             name: 'Purchase Return',
-  //             path: '/inventory/return',
-  //             icon: RotateCwIcon,
-  //           },
-  //         ],
-  //       },
-  //       {
-  //         key: 'inventory-spare-part-purchase',
-  //         name: 'Spare Parts Purchase',
-  //         icon: PlusIcon,
-  //         children: [
-  //           {
-  //             key: 'inventory-spare-part-purchase-2',
-  //             name: 'Purchase',
-  //             path: '/inventory/purchase',
-  //             icon: RotateCwIcon,
-  //           },
-  //         ],
-  //       },
-  //       {
-  //         key: 'inventory-purchase-return',
-  //         name: 'Purchase Return',
-  //         icon: PlusIcon,
-  //         children: [
-  //           {
-  //             key: 'purchase-return',
-  //             name: 'Purchase Return',
-  //             path: '/inventory/purchase-return',
-  //             icon: RotateCwIcon,
-  //           },
-  //         ],
-  //       },
-  //     ],
-  //   },
-  // ],
-  // customers: [
-  //   {
-  //     key: 'customers',
-  //     name: 'Customers',
-  //     path: '/customers',
-  //     icon: Users,
-  //     title: 'Customers',
-  //   },
-  // ],
-  // reports: [
-  //   {
-  //     key: 'reports',
-  //     name: 'Reports',
-  //     path: '/reports',
-  //     icon: FileText,
-  //     title: 'Reports',
-  //   },
-  // ],
-
-  // hrms: [
-  //   {
-  //     key: 'hrms-employee',
-  //     name: 'Employee',
-  //     path: '/hrms/employee',
-  //     icon: PersonStandingIcon,
-  //     title: 'HRMS',
-  //   },
-  //   {
-  //     key: 'hrms-payroll',
-  //     name: 'Payroll',
-  //     path: '/hrms/payroll',
-  //     icon: PersonStandingIcon,
-  //   },
-  //   {
-  //     key: 'hrms-announcements',
-  //     name: 'Announcements',
-  //     path: '/hrms/announcements',
-  //     icon: PersonStandingIcon,
-  //   },
-  //   {
-  //     key: 'hrms-holidays',
-  //     name: 'Holidays',
-  //     path: '/hrms/holidays',
-  //     icon: PersonStandingIcon,
-  //   },
-  // ],
+  'media-assets': [
+    {
+      key: 'media-assets-home',
+      name: 'Manage Home Banner',
+      path: '/media-assets/home',
+      icon: PenToolIcon,
+      title: 'Home Banner',
+    },
+    {
+      key: 'media-assets-news',
+      name: 'Manage News Banner',
+      path: '/media-assets/news',
+      icon: PenToolIcon,
+      title: 'News Banner',
+    },
+  ],
 };
