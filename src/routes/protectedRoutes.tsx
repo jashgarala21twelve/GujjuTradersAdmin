@@ -1,3 +1,5 @@
+import { CreateFaq } from '@/pages/faq/create';
+import { FaqView } from '@/pages/faq/view';
 import { CreateNews } from '@/pages/news/create';
 import { EditViewNews } from '@/pages/news/view';
 import ViewNewCategory from '@/pages/newscategory/view';
@@ -96,6 +98,8 @@ const ProtectedRoutes: RouteObject[] = [
   { path: '/news/view/:id', element: <EditViewNews /> },
   { path: '/news/category', element: <NewsCategory /> },
   { path: '/faq', element: <FAQ /> },
+  { path: '/faq/view/:id', element: <FaqView /> },
+  { path: '/faq/create', element: <CreateFaq /> },
   { path: '/tradetips', element: <TradeTips /> },
   { path: '/tradetips/create', element: <TradeTipsStockTable /> },
   { path: '/tradetips/create/:symbol', element: <CreateTradeTip /> },
