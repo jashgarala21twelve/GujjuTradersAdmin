@@ -1,5 +1,8 @@
 import { CreateFaq } from '@/pages/faq/create';
 import { FaqView } from '@/pages/faq/view';
+import MediaAssets from '@/pages/mediaAssets';
+import MediaAssetsHome from '@/pages/mediaAssets/home';
+import MediaAssetsNews from '@/pages/mediaAssets/new';
 import { CreateNews } from '@/pages/news/create';
 import { EditViewNews } from '@/pages/news/view';
 import ViewNewCategory from '@/pages/newscategory/view';
@@ -107,7 +110,14 @@ const ProtectedRoutes: RouteObject[] = [
   { path: '/social-links', element: <SocialLinks /> },
   { path: '/news/category/create', element: <CreateNewsCategory /> },
   { path: '/news/category/view/:id', element: <ViewNewCategory /> },
-  // { path: '/media-assets', element: <MediaAssets /> },
+  {
+    path: '/media-assets',
+    element: <MediaAssets />,
+    children: [
+      { path: '/media-assets/home', element: <MediaAssetsHome /> },
+      { path: '/media-assets/news', element: <MediaAssetsNews /> },
+    ],
+  },
   { path: '/plans', element: <Plans /> },
   { path: '/plans/create', element: <CreatePlan /> },
   { path: '/plans/view/:planId', element: <UpdatePlan /> },
