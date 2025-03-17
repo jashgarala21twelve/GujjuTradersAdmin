@@ -43,6 +43,8 @@ import {
   Settings,
   Home,
   Images,
+  icons,
+  Wallet,
 } from 'lucide-react';
 
 export const menuItems = [
@@ -59,5 +61,6 @@ export const menuItems = [
   // { name: 'Media Assets', icon: Image, path: '/media-assets' },
   { name: 'media-assets', icon: Images, path: '/media-assets/home' },
   { name: 'plans', icon: CreditCard, path: '/plans' },
+  { name: 'transaction', icon: Wallet, path: '/transaction' },
   { name: 'settings', icon: Settings, path: '/settings' },
 ];

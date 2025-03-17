@@ -6,6 +6,8 @@ import MediaAssetsNews from '@/pages/mediaAssets/new';
 import { CreateNews } from '@/pages/news/create';
 import { EditViewNews } from '@/pages/news/view';
 import ViewNewCategory from '@/pages/newscategory/view';
+import Transaction from '@/pages/transaction';
+import TransactionView from '@/pages/transaction/view';
 import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
 
@@ -122,6 +124,14 @@ const ProtectedRoutes: RouteObject[] = [
   { path: '/plans/create', element: <CreatePlan /> },
   { path: '/plans/view/:planId', element: <UpdatePlan /> },
   { path: '/settings', element: <Settings /> },
+  {
+    path: '/transaction',
+    element: <Transaction />,
+  },
+  {
+    path: '/transaction/view/:id',
+    element: <TransactionView />,
+  },
 ];
 
 export default ProtectedRoutes;

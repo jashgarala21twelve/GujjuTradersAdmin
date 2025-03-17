@@ -168,6 +168,7 @@
 // ];
 
 import { Button } from '@/components/ui/button';
+import Transaction from '@/pages/transaction';
 import {
   Users,
   FileText,
@@ -339,6 +340,15 @@ export const sidebarMenus = {
       path: '/media-assets/news',
       icon: PenToolIcon,
       title: 'News Banner',
+    },
+  ],
+  transaction: [
+    {
+      key: 'transaction-home',
+      name: 'Manage Transaction',
+      path: '/transaction',
+      icon: CreditCard,
+      title: 'Home Transaction',
     },
   ],
 };
