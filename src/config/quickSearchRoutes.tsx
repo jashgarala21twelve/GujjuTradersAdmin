@@ -24,7 +24,9 @@ import {
   HelpCircle,
   Lightbulb,
   Share2,
-} from "lucide-react";
+  Images,
+  Bell,
+} from 'lucide-react';
 
 // export const quickSearchRoutes = [
 //   { name: "Dashboard", path: "/", icon: Home },
@@ -65,15 +67,17 @@ import {
 // ];
 
 export const quickSearchRoutes = [
-  { name: "Dashboard", path: "/", icon: Home },
-  { name: "Users", path: "/users", icon: Users },
-  { name: "Coupons", path: "/coupons", icon: Tag },
-  { name: "Referrals", path: "/referrals", icon: Gift },
-  { name: "News", path: "/news", icon: Newspaper },
-  { name: "News Category", path: "/news/category", icon: ListChecks },
-  { name: "FAQ", path: "/faq", icon: HelpCircle },
-  { name: "Trade Tips", path: "/tradetips", icon: Lightbulb },
-  { name: "Social Links", path: "/social-links", icon: Share2 },
-  { name: "Plans", path: "/plans", icon: CreditCard },
-  { name: "Settings", path: "/settings", icon: Settings },
+  { name: 'Dashboard', path: '/', icon: Home },
+  { name: 'Users', path: '/users', icon: Users },
+  { name: 'Coupons', path: '/coupons', icon: Tag },
+  { name: 'Referrals', path: '/referrals', icon: Gift },
+  { name: 'News', path: '/news', icon: Newspaper },
+  { name: 'News Category', path: '/news/category', icon: ListChecks },
+  { name: 'FAQ', path: '/faq', icon: HelpCircle },
+  { name: 'Trade Tips', path: '/tradetips', icon: Lightbulb },
+  { name: 'Social Links', path: '/social-links', icon: Share2 },
+  { name: 'media-assets', icon: Images, path: '/media-assets/home' },
+  { name: 'notifications', icon: Bell, path: '/notifications/home' },
+  { name: 'Plans', path: '/plans', icon: CreditCard },
+  { name: 'Settings', path: '/settings', icon: Settings },
 ];

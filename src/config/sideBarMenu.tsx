@@ -193,6 +193,7 @@ import {
   Lightbulb,
   Share2,
   CreditCard,
+  Bell,
 } from 'lucide-react';
 
 export const sidebarMenus = {
@@ -325,6 +326,15 @@ export const sidebarMenus = {
       path: '/media-assets/news',
       icon: PenToolIcon,
       title: 'News Banner',
+    },
+  ],
+  notifications: [
+    {
+      key: 'notifications-home',
+      name: 'Manage Notifications',
+      path: '/notifications',
+      icon: Bell,
+      title: 'Notifications',
     },
   ],
 };

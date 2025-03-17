@@ -34,15 +34,14 @@ import {
   Tag,
   Gift,
   Newspaper,
-  ListChecks,
   HelpCircle,
   Lightbulb,
   Share2,
-  Image,
   CreditCard,
   Settings,
   Home,
   Images,
+  Bell,
 } from 'lucide-react';
 
 export const menuItems = [
@@ -58,6 +57,7 @@ export const menuItems = [
   { name: 'social-links', icon: Share2, path: '/social-links' },
   // { name: 'Media Assets', icon: Image, path: '/media-assets' },
   { name: 'media-assets', icon: Images, path: '/media-assets/home' },
+  { name: 'notifications', icon: Bell, path: '/notifications' },
   { name: 'plans', icon: CreditCard, path: '/plans' },
   { name: 'settings', icon: Settings, path: '/settings' },
 ];
