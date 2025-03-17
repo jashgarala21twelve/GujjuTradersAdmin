@@ -53,9 +53,9 @@ export const menuItems = [
   { name: 'referrals', icon: Gift, path: '/referrals' },
   { name: 'news', icon: Newspaper, path: '/news' },
   // { name: 'News Category', icon: ListChecks, path: '/news/category' },
-  { name: 'faq', icon: HelpCircle, path: '/faq' },
+  // { name: 'faq', icon: HelpCircle, path: '/faq' },
 
-  { name: 'social-links', icon: Share2, path: '/social-links' },
+  // { name: 'social-links', icon: Share2, path: '/social-links' },
   // { name: 'Media Assets', icon: Image, path: '/media-assets' },
   { name: 'media-assets', icon: Images, path: '/media-assets/home' },
   { name: 'plans', icon: CreditCard, path: '/plans' },

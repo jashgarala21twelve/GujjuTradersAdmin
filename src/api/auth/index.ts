@@ -6,6 +6,7 @@ export const BASE_AUTH_ROUTE = BASE_API_URL + '/auth';
 const AUTH_ROUTES = {
   LOGIN: BASE_AUTH_ROUTE + '/login',
   LOGOUT: BASE_AUTH_ROUTE + '/logout',
+  RESET_PASSWORD: BASE_AUTH_ROUTE + '/resetPassword',
 };
 // // Login API Call
 // export const loginApi = async (data: Record<string, any>) => {
@@ -33,5 +34,5 @@ export const logoutApi = async () => {
 
 // Change Password API Call
 export const changePasswordApi = async (data: Record<string, any>) => {
-  return request('post', '/change_password', data);
+  return request('post', AUTH_ROUTES.RESET_PASSWORD, data);
 };

@@ -28,14 +28,17 @@ export const SidebarFooterComponent = () => {
   const { isPending, mutate: changePassword } = useChangePasswordMutation(
     onHandleChangePasswordSuccess
   );
-  const handleChangePassword = data => {
-    const formData = convertToFormData(data);
-    changePassword(formData);
+  const handleChangePassword = (data: { [key: string]: string }) => {
+    const payload = {
+      oldPassword: data.user_old_password,
+      newPassword: data.user_new_password,
+    };
+    changePassword(payload);
   };
 
   return (
-    <SidebarFooter className="border-t border-r  dark:bg-gray-950">
-      <div className="flex flex-col gap-5 py-3">
+    <SidebarFooter className='border-t border-r  dark:bg-gray-950'>
+      <div className='flex flex-col gap-5 py-3'>
         {/* <Button variant="outline">Change Password</Button> */}
 
         <ChangePasswordDialog
@@ -52,12 +55,12 @@ export const SidebarFooterComponent = () => {
           Logout
         </Button>
         <AlertDialogComponent
-          title="Are you sure you want to logout?"
-          description="You will need to log in again to access your account."
-          confirmText="Logout"
-          cancelText="Cancel"
+          title='Are you sure you want to logout?'
+          description='You will need to log in again to access your account.'
+          confirmText='Logout'
+          cancelText='Cancel'
           onConfirm={handleLogout}
-          confirmButtonClass="bg-destructive text-white hover:bg-red-600"
+          confirmButtonClass='bg-destructive text-white hover:bg-red-600'
           open={isLogoutAlertOpen}
           setOpen={setIsLogoutAlertOpen}
         />
