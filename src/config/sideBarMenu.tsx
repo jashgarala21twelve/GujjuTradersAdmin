@@ -254,15 +254,15 @@ export const sidebarMenus = {
       title: 'News Category',
     },
   ],
-  faq: [
-    {
-      key: 'faq',
-      name: 'Manage FAQ',
-      path: '/faq',
-      icon: HelpCircle,
-      title: 'FAQ',
-    },
-  ],
+  // faq: [
+  //   {
+  //     key: 'faq',
+  //     name: 'Manage FAQ',
+  //     path: '/faq',
+  //     icon: HelpCircle,
+  //     title: 'FAQ',
+  //   },
+  // ],
   tradetips: [
     {
       key: 'tradetips',
@@ -278,15 +278,15 @@ export const sidebarMenus = {
       icon: Lightbulb,
     },
   ],
-  sociallinks: [
-    {
-      key: 'sociallinks',
-      name: 'Manage Social Links',
-      path: '/social-links',
-      icon: Share2,
-      title: 'Socials',
-    },
-  ],
+  // sociallinks: [
+  //   {
+  //     key: 'sociallinks',
+  //     name: 'Manage Social Links',
+  //     path: '/social-links',
+  //     icon: Share2,
+  //     title: 'Socials',
+  //   },
+  // ],
   plans: [
     {
       key: 'plans',
@@ -309,6 +309,20 @@ export const sidebarMenus = {
       path: '/settings',
       icon: SettingsIcon,
       title: 'Admin Settings',
+    },
+    {
+      key: 'faq',
+      name: 'Manage FAQ',
+      path: '/faq',
+      icon: HelpCircle,
+      title: 'FAQ',
+    },
+    {
+      key: 'sociallinks',
+      name: 'Manage Social Links',
+      path: '/social-links',
+      icon: Share2,
+      title: 'Socials',
     },
   ],
   'media-assets': [

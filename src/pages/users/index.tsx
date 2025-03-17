@@ -245,17 +245,17 @@ const Users = () => {
   useEffect(() => {
     refetch();
   }, [pagination.currentPage, pagination.perPage, refetch]);
-  const handlePageChange = page => {
-    setPagination(prev => {
+  const handlePageChange = (page) => {
+    setPagination((prev) => {
       return {
         ...prev,
         currentPage: page,
       };
     });
   };
-  const onHandleSearch = value => {
+  const onHandleSearch = (value) => {
     setSearch(value);
-    setPagination(prev => {
+    setPagination((prev) => {
       return {
         ...prev,
         currentPage: 1,
@@ -269,11 +269,11 @@ const Users = () => {
       accessorKey: '_id',
       header: ({ column }) => (
         <Button
-          variant="ghost"
+          variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           ID
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       ),
       cell: ({ row }) => (
@@ -295,7 +295,7 @@ const Users = () => {
           {' '}
           <CopyToClipboard
             text={row.getValue('phone_number')}
-            textStyle="font-semibold"
+            textStyle='font-semibold'
           />
         </div>
       ),
@@ -304,16 +304,16 @@ const Users = () => {
       accessorKey: 'email',
       header: ({ column }) => (
         <Button
-          variant="ghost"
+          variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       ),
       cell: ({ row }) => (
-        <div className="lowercase">
-          <CopyToClipboard text={row.getValue('email')} textStyle="" />
+        <div className='lowercase'>
+          <CopyToClipboard text={row.getValue('email')} textStyle='' />
         </div>
       ),
     },
@@ -327,7 +327,15 @@ const Users = () => {
       header: 'Account Status',
       cell: ({ row }) => (
         <div>
-          {row.getValue('account_status') === 1 ? 'Active' : 'Inactive'}
+          {row.getValue('account_status') === 1 ? (
+            <span className='bg-green-100 text-green-800 px-2 py-1 rounded'>
+              Active
+            </span>
+          ) : (
+            <span className='bg-red-100 text-red-800 px-2 py-1 rounded'>
+              Inactive
+            </span>
+          )}
         </div>
       ),
     },
@@ -337,8 +345,8 @@ const Users = () => {
       cell: ({ row }) => (
         <img
           src={row.getValue('profile_image')}
-          alt="Profile"
-          className="h-10 w-10 rounded-full object-cover"
+          alt='Profile'
+          className='h-10 w-10 rounded-full object-cover'
         />
       ),
     },
@@ -348,7 +356,7 @@ const Users = () => {
       cell: ({ row }) => {
         const user = row.original;
         return (
-          <div className="flex w-full items-center justify-center space-x-3">
+          <div className='flex w-full items-center justify-center space-x-3'>
             <Link to={`/users/${user._id}`}>View</Link>
 
             {row.getValue('account_status') === ACCOUNT_STATUS.ACTIVE ? (
@@ -394,25 +402,25 @@ const Users = () => {
   ];
   return (
     <div>
-      <PageTitle title="Users" />
+      <PageTitle title='Users' />
 
-      <div className="border rounded-xl p-4 flex flex-start flex-col min-h-[700px] ">
+      <div className='border rounded-xl p-4 flex flex-start flex-col min-h-[700px] '>
         {/* ✅ Loader now fills the entire dashboard area */}
 
         {/* ✅ Error Message */}
         {isError && (
-          <div className="flex flex-1 items-center justify-center">
-            <p className="text-red-500">Error fetching data</p>
+          <div className='flex flex-1 items-center justify-center'>
+            <p className='text-red-500'>Error fetching data</p>
           </div>
         )}
         <Input
-          placeholder="Search Users"
+          placeholder='Search Users'
           value={search}
-          onChange={e => onHandleSearch(e.target.value)}
-          className="max-w-sm"
+          onChange={(e) => onHandleSearch(e.target.value)}
+          className='max-w-sm'
         />
         {isPending && (
-          <div className="h-[700px]">
+          <div className='h-[700px]'>
             <CircleLoading />
           </div>
         )}
@@ -428,22 +436,22 @@ const Users = () => {
         )}
       </div>
       <AlertDialogComponent
-        title="Are you sure you want Active this User?"
-        description=""
-        confirmText="Activate User"
-        cancelText="Cancel"
+        title='Are you sure you want Active this User?'
+        description=''
+        confirmText='Activate User'
+        cancelText='Cancel'
         onConfirm={() => {}}
-        confirmButtonClass="bg-primary  hover:bg-primary-600"
+        confirmButtonClass='bg-primary  hover:bg-primary-600'
         open={isActiveUserAlertOpen}
         setOpen={setActiveUserAlertOpen}
       />
       <AlertDialogComponent
-        title="Are you sure you want In Active this User?"
-        description=""
-        confirmText="InActive User"
-        cancelText="Cancel"
+        title='Are you sure you want In Active this User?'
+        description=''
+        confirmText='InActive User'
+        cancelText='Cancel'
         onConfirm={() => {}}
-        confirmButtonClass="bg-destructive text-white hover:bg-red-600"
+        confirmButtonClass='bg-destructive text-white hover:bg-red-600'
         open={isInactiveUserAlertOpen}
         setOpen={setIsInactiveUserAlertOpen}
       />
