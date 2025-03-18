@@ -45,6 +45,7 @@ import {
   Images,
   icons,
   Wallet,
+  MessageCircle,
 } from 'lucide-react';
 
 export const menuItems = [
@@ -62,5 +63,6 @@ export const menuItems = [
   { name: 'media-assets', icon: Images, path: '/media-assets/home' },
   { name: 'plans', icon: CreditCard, path: '/plans' },
   { name: 'transaction', icon: Wallet, path: '/transaction' },
+  { name: 'chat', icon: MessageCircle, path: '/chat' },
   { name: 'settings', icon: Settings, path: '/settings' },
 ];

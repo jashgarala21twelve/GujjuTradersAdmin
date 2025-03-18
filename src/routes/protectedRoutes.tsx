@@ -1,3 +1,4 @@
+import Chat from '@/pages/chat';
 import { CreateFaq } from '@/pages/faq/create';
 import { FaqView } from '@/pages/faq/view';
 import MediaAssets from '@/pages/mediaAssets';
@@ -127,6 +128,10 @@ const ProtectedRoutes: RouteObject[] = [
   {
     path: '/transaction',
     element: <Transaction />,
+  },
+  {
+    path: '/chat',
+    element: <Chat />,
   },
   {
     path: '/transaction/view/:id',

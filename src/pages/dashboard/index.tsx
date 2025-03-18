@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Calendar, X } from 'lucide-react';
+import { Calendar, Loader2, X } from 'lucide-react';
 import dayjs from 'dayjs';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
@@ -157,200 +157,210 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-8'>
+        {isSuccess ? (
+          <>
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-8'>
+              <DashBoardCard
+                heading='Total Users'
+                number={dashboardData?.totalUsers ?? 0}
+                // trend={+5.2}
+                icon='users'
+                color='primary'
+              />
+              <DashBoardCard
+                heading='Total Tradetips'
+                number={dashboardData?.totalTradeTips ?? 0}
+                // trend={+12.5}
+                icon='trending-up'
+                color='success'
+              />
+              <DashBoardCard
+                heading='Total Revenue'
+                number={dashboardData?.totalRevenue ?? 0}
+                // trend={+8.7}
+                icon='credit-card'
+                color='warning'
+              />
+            </div>
+
+            <Tabs defaultValue='users' className='w-full'>
+              <TabsList className='mb-6'>
+                <TabsTrigger value='users'>User Data</TabsTrigger>
+                <TabsTrigger value='tradetips'>Tradetips Data</TabsTrigger>
+                <TabsTrigger value='payments'>Payment Data</TabsTrigger>
+                <TabsTrigger value='plans'>Plan Data</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value='users' className='space-y-4'>
+                <div className='bg-card rounded-xl p-6 shadow-sm border'>
+                  <div className='flex items-center justify-between mb-6'>
+                    <h2 className='text-2xl font-semibold'>User Data</h2>
+                    {/* <Badge variant='outline' className='px-3'>
+            Last 30 days
+          </Badge> */}
+                  </div>
+                  <Separator className='mb-6' />
+                  <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+                    <DashBoardCard
+                      heading='Active Users'
+                      number={dashboardData?.activeUsers ?? 0}
+                      icon='user-check'
+                      color='success'
+                    />
+                    <DashBoardCard
+                      heading='Inactive Users'
+                      number={dashboardData?.inactiveUsers ?? 0}
+                      icon='user-x'
+                      color='destructive'
+                    />
+                    <DashBoardCard
+                      heading='Total Users'
+                      number={dashboardData?.totalUsers ?? 0}
+                      icon='users'
+                      color='primary'
+                    />
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value='tradetips' className='space-y-4'>
+                <div className='bg-card rounded-xl p-6 shadow-sm border'>
+                  <div className='flex items-center justify-between mb-6'>
+                    <h2 className='text-2xl font-semibold'>Tradetips Data</h2>
+                    {/* <Badge variant='outline' className='px-3'>
+            Last 30 days
+          </Badge> */}
+                  </div>
+                  <Separator className='mb-6' />
+                  <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+                    <DashBoardCard
+                      heading='Total Tradetips'
+                      number={dashboardData?.totalTradeTips ?? 0}
+                      icon='bar-chart-2'
+                      color='primary'
+                    />
+                    <DashBoardCard
+                      heading='Active Tradetips'
+                      number={dashboardData?.activeTradeTips ?? 0}
+                      icon='activity'
+                      color='success'
+                    />
+                    <DashBoardCard
+                      heading='Inactive Tradetips'
+                      number={dashboardData?.inactiveTradeTips ?? 0}
+                      icon='x-circle'
+                      color='destructive'
+                    />
+                    <DashBoardCard
+                      heading='Target Archived'
+                      number={dashboardData?.targetAchievedCount ?? 0}
+                      icon='target'
+                      color='warning'
+                    />
+                    <DashBoardCard
+                      heading='Stoploss Hit'
+                      number={dashboardData?.stopLossHitCount ?? 0}
+                      icon='alert-triangle'
+                      color='destructive'
+                    />
+                    <DashBoardCard
+                      heading='Most Bookmarked'
+                      number={
+                        dashboardData?.mostBookmarkedTradeTips?.bookmarkCount ??
+                        0
+                      }
+                      icon='bookmark'
+                      trend={
+                        dashboardData?.mostBookmarkedTradeTips?.stockName ??
+                        'N/A'
+                      }
+                      color='info'
+                    />
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value='payments' className='space-y-4'>
+                <div className='bg-card rounded-xl p-6 shadow-sm border'>
+                  <div className='flex items-center justify-between mb-6'>
+                    <h2 className='text-2xl font-semibold'>Payment Data</h2>
+                    {/* <Badge variant='outline' className='px-3'>
+            Last 30 days
+          </Badge> */}
+                  </div>
+                  <Separator className='mb-6' />
+                  <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+                    <DashBoardCard
+                      heading='Total Revenue'
+                      number={dashboardData?.totalRevenue ?? 0}
+                      icon='credit-card'
+                      color='primary'
+                    />
+                    <DashBoardCard
+                      heading='Failed Transactions'
+                      number={dashboardData?.failedTransactionCount ?? 0}
+                      icon='x-circle'
+                      color='destructive'
+                    />
+                    <DashBoardCard
+                      heading='Success Transactions'
+                      number={dashboardData?.successTransactionCount ?? 0}
+                      icon='check-circle'
+                      color='success'
+                    />
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value='plans' className='space-y-4'>
+                <div className='bg-card rounded-xl p-6 shadow-sm border'>
+                  <div className='flex items-center justify-between mb-6'>
+                    <h2 className='text-2xl font-semibold'>Plan Data</h2>
+                    {/* <Badge variant='outline' className='px-3'>
+            Active Subscriptions
+          </Badge> */}
+                  </div>
+                  <Separator className='mb-6' />
+                  <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+                    {dashboardData?.userPlanCounts.map(
+                      (item: { label: string; count: number }) => {
+                        return (
+                          <DashBoardCard
+                            key={item?.count}
+                            heading={item?.label}
+                            number={item?.count}
+                            description='Active Users'
+                            icon='zap'
+                            color='warning'
+                          />
+                        );
+                      }
+                    )}
+
+                    {/* <DashBoardCard
+            heading='Smart Trader'
+            number={15}
+            description='Active Users'
+            icon='award'
+            color='info'
+          />
           <DashBoardCard
-            heading='Total Users'
-            number={dashboardData?.totalUsers ?? 0}
-            // trend={+5.2}
-            icon='users'
+            heading='Pro Trader'
+            number={5}
+            description='Active Users'
+            icon='star'
             color='primary'
-          />
-          <DashBoardCard
-            heading='Total Tradetips'
-            number={dashboardData?.totalTradeTips ?? 0}
-            // trend={+12.5}
-            icon='trending-up'
-            color='success'
-          />
-          <DashBoardCard
-            heading='Total Revenue'
-            number={dashboardData?.totalRevenue ?? 0}
-            // trend={+8.7}
-            icon='credit-card'
-            color='warning'
-          />
-        </div>
-
-        <Tabs defaultValue='users' className='w-full'>
-          <TabsList className='mb-6'>
-            <TabsTrigger value='users'>User Data</TabsTrigger>
-            <TabsTrigger value='tradetips'>Tradetips Data</TabsTrigger>
-            <TabsTrigger value='payments'>Payment Data</TabsTrigger>
-            <TabsTrigger value='plans'>Plan Data</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value='users' className='space-y-4'>
-            <div className='bg-card rounded-xl p-6 shadow-sm border'>
-              <div className='flex items-center justify-between mb-6'>
-                <h2 className='text-2xl font-semibold'>User Data</h2>
-                {/* <Badge variant='outline' className='px-3'>
-                  Last 30 days
-                </Badge> */}
-              </div>
-              <Separator className='mb-6' />
-              <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-                <DashBoardCard
-                  heading='Active Users'
-                  number={dashboardData?.activeUsers ?? 0}
-                  icon='user-check'
-                  color='success'
-                />
-                <DashBoardCard
-                  heading='Inactive Users'
-                  number={dashboardData?.inactiveUsers ?? 0}
-                  icon='user-x'
-                  color='destructive'
-                />
-                <DashBoardCard
-                  heading='Total Users'
-                  number={dashboardData?.totalUsers ?? 0}
-                  icon='users'
-                  color='primary'
-                />
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value='tradetips' className='space-y-4'>
-            <div className='bg-card rounded-xl p-6 shadow-sm border'>
-              <div className='flex items-center justify-between mb-6'>
-                <h2 className='text-2xl font-semibold'>Tradetips Data</h2>
-                {/* <Badge variant='outline' className='px-3'>
-                  Last 30 days
-                </Badge> */}
-              </div>
-              <Separator className='mb-6' />
-              <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-                <DashBoardCard
-                  heading='Total Tradetips'
-                  number={dashboardData?.totalTradeTips ?? 0}
-                  icon='bar-chart-2'
-                  color='primary'
-                />
-                <DashBoardCard
-                  heading='Active Tradetips'
-                  number={dashboardData?.activeTradeTips ?? 0}
-                  icon='activity'
-                  color='success'
-                />
-                <DashBoardCard
-                  heading='Inactive Tradetips'
-                  number={dashboardData?.inactiveTradeTips ?? 0}
-                  icon='x-circle'
-                  color='destructive'
-                />
-                <DashBoardCard
-                  heading='Target Archived'
-                  number={dashboardData?.targetAchievedCount ?? 0}
-                  icon='target'
-                  color='warning'
-                />
-                <DashBoardCard
-                  heading='Stoploss Hit'
-                  number={dashboardData?.stopLossHitCount ?? 0}
-                  icon='alert-triangle'
-                  color='destructive'
-                />
-                <DashBoardCard
-                  heading='Most Bookmarked'
-                  number={
-                    dashboardData?.mostBookmarkedTradeTips?.bookmarkCount ?? 0
-                  }
-                  icon='bookmark'
-                  trend={
-                    dashboardData?.mostBookmarkedTradeTips?.stockName ?? 'N/A'
-                  }
-                  color='info'
-                />
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value='payments' className='space-y-4'>
-            <div className='bg-card rounded-xl p-6 shadow-sm border'>
-              <div className='flex items-center justify-between mb-6'>
-                <h2 className='text-2xl font-semibold'>Payment Data</h2>
-                {/* <Badge variant='outline' className='px-3'>
-                  Last 30 days
-                </Badge> */}
-              </div>
-              <Separator className='mb-6' />
-              <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-                <DashBoardCard
-                  heading='Total Revenue'
-                  number={dashboardData?.totalRevenue ?? 0}
-                  icon='credit-card'
-                  color='primary'
-                />
-                <DashBoardCard
-                  heading='Failed Transactions'
-                  number={dashboardData?.failedTransactionCount ?? 0}
-                  icon='x-circle'
-                  color='destructive'
-                />
-                <DashBoardCard
-                  heading='Success Transactions'
-                  number={dashboardData?.successTransactionCount ?? 0}
-                  icon='check-circle'
-                  color='success'
-                />
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value='plans' className='space-y-4'>
-            <div className='bg-card rounded-xl p-6 shadow-sm border'>
-              <div className='flex items-center justify-between mb-6'>
-                <h2 className='text-2xl font-semibold'>Plan Data</h2>
-                {/* <Badge variant='outline' className='px-3'>
-                  Active Subscriptions
-                </Badge> */}
-              </div>
-              <Separator className='mb-6' />
-              <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-                {dashboardData?.userPlanCounts.map(
-                  (item: { label: string; count: number }) => {
-                    return (
-                      <DashBoardCard
-                        key={item?.count}
-                        heading={item?.label}
-                        number={item?.count}
-                        description='Active Users'
-                        icon='zap'
-                        color='warning'
-                      />
-                    );
-                  }
-                )}
-
-                {/* <DashBoardCard
-                  heading='Smart Trader'
-                  number={15}
-                  description='Active Users'
-                  icon='award'
-                  color='info'
-                />
-                <DashBoardCard
-                  heading='Pro Trader'
-                  number={5}
-                  description='Active Users'
-                  icon='star'
-                  color='primary'
-                /> */}
-              </div>
-            </div>
-          </TabsContent>
-        </Tabs>
+          /> */}
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </>
+        ) : (
+          <div className='flex justify-center items-center h-screen'>
+            <Loader2 size={40} className='animate-spin text-[#2A9D90]' />
+          </div>
+        )}
       </div>
     </div>
   );
