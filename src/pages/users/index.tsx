@@ -4,10 +4,11 @@ import DynamicDataTable from '@/components/datatable/datatable';
 import { CircleLoading } from '@/components/loader';
 import Loader from '@/components/loader/loader';
 import PageTitle from '@/components/pageTitle';
+import Toast from '@/components/toast/commonToast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useUsers } from '@/hooks/api/users/useUsers';
+import { activeInactiveUserHook, useUsers } from '@/hooks/api/users/useUsers';
 import { ACCOUNT_STATUS } from '@/utils/constants';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, Eye } from 'lucide-react';
@@ -212,6 +213,7 @@ const Users = () => {
 
   const [data, setData] = useState([]);
   const [search, setSearch] = useState('');
+  const [id, setId] = useState('');
   const [pagination, setPagination] = useState({
     currentPage: 1,
     perPage: 10,
@@ -229,6 +231,11 @@ const Users = () => {
     page: pagination.currentPage,
     search: search,
   });
+  const onSuccessHandler = (data: any) => {
+    Toast('success', data?.message || 'News created successfully');
+  };
+  const { mutate: activeInactive, isSuccess: activateUserSuccess } =
+    activeInactiveUserHook(onSuccessHandler);
   useEffect(() => {
     if (apiResponse) {
       const { data: Data } = apiResponse;
@@ -244,7 +251,12 @@ const Users = () => {
   }, [apiResponse]);
   useEffect(() => {
     refetch();
-  }, [pagination.currentPage, pagination.perPage, refetch]);
+  }, [
+    pagination.currentPage,
+    pagination.perPage,
+    refetch,
+    activateUserSuccess,
+  ]);
   const handlePageChange = (page) => {
     setPagination((prev) => {
       return {
@@ -262,6 +274,16 @@ const Users = () => {
       };
     });
   };
+
+  const handleActiveUser = (value: number) => {
+    const payload = {
+      userId: id,
+      action: value,
+    };
+    activeInactive(payload);
+    console.log('Payload:>>', payload);
+  };
+
   const [isInactiveUserAlertOpen, setIsInactiveUserAlertOpen] = useState(false);
   const [isActiveUserAlertOpen, setActiveUserAlertOpen] = useState(false);
   const columns: ColumnDef[] = [
@@ -362,14 +384,20 @@ const Users = () => {
             {row.getValue('account_status') === ACCOUNT_STATUS.ACTIVE ? (
               <Button
                 variant={'destructive'}
-                onClick={() => setIsInactiveUserAlertOpen(true)}
+                onClick={() => {
+                  setIsInactiveUserAlertOpen(true);
+                  setId(user._id);
+                }}
               >
                 InActive
               </Button>
             ) : (
               <Button
                 variant={'default'}
-                onClick={() => setActiveUserAlertOpen(true)}
+                onClick={() => {
+                  setActiveUserAlertOpen(true);
+                  setId(user._id);
+                }}
               >
                 Activate
               </Button>
@@ -440,7 +468,7 @@ const Users = () => {
         description=''
         confirmText='Activate User'
         cancelText='Cancel'
-        onConfirm={() => {}}
+        onConfirm={() => handleActiveUser(1)}
         confirmButtonClass='bg-primary  hover:bg-primary-600'
         open={isActiveUserAlertOpen}
         setOpen={setActiveUserAlertOpen}
@@ -450,7 +478,7 @@ const Users = () => {
         description=''
         confirmText='InActive User'
         cancelText='Cancel'
-        onConfirm={() => {}}
+        onConfirm={() => handleActiveUser(2)}
         confirmButtonClass='bg-destructive text-white hover:bg-red-600'
         open={isInactiveUserAlertOpen}
         setOpen={setIsInactiveUserAlertOpen}
