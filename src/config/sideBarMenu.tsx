@@ -1,191 +1,8 @@
-// import { ReactNode } from "react";
-// import {
-//   LayoutDashboardIcon,
-//   BriefcaseIcon,
-//   SearchIcon,
-//   CarIcon,
-//   Package,
-//   PenToolIcon,
-//   RotateCwIcon,
-//   FileText,
-//   Users,
-//   SettingsIcon,
-//   PersonStandingIcon,
-// } from "lucide-react";
-
-// export interface SidebarMenuItem {
-//   key: string;
-//   name: string;
-//   path?: string;
-//   icon?: ReactNode;
-//   children?: SidebarMenuItem[];
-// }
-
-// export const sidebarMenus: SidebarMenuItem[] = [
-//   {
-//     key: "dashboard",
-//     name: "Dashboard",
-//     path: "/",
-//     icon: <LayoutDashboardIcon />,
-//   },
-//   {
-//     key: "jobs",
-//     name: "Jobs Management",
-//     icon: <BriefcaseIcon />,
-//     children: [
-//       { key: "jobs-main", name: "Manage Jobs", path: "/jobs" },
-//       { key: "jobs-empty", name: "Empty Jobs", path: "/jobs/empty" },
-//       {
-//         key: "jobs-search",
-//         name: "Search Jobs",
-//         path: "/jobs/search",
-//         icon: <SearchIcon />,
-//       },
-//     ],
-//   },
-//   {
-//     key: "cabhistory",
-//     name: "Cab History",
-//     path: "/cabhistory",
-//     icon: <CarIcon />,
-//   },
-//   {
-//     key: "spareparts",
-//     name: "Spare Parts",
-//     icon: <Package />,
-//     children: [
-//       { key: "spare-main", name: "Manage Spare Parts", path: "/spareparts" },
-//       {
-//         key: "spare-used",
-//         name: "Used Spare Parts",
-//         path: "/inventory/used",
-//         icon: <PenToolIcon />,
-//       },
-//       {
-//         key: "spare-new",
-//         name: "New Spare Parts",
-//         path: "/inventory/new",
-//         icon: <PenToolIcon />,
-//       },
-//       {
-//         key: "spare-return",
-//         name: "Spare Parts Return",
-//         path: "/inventory/return",
-//         icon: <RotateCwIcon />,
-//       },
-//       {
-//         key: "spare-purchase",
-//         name: "Spare Parts Purchase",
-//         path: "/inventory/purchase",
-//         icon: <RotateCwIcon />,
-//       },
-//       {
-//         key: "purchase-return",
-//         name: "Purchase Return",
-//         path: "/inventory/purchase-return",
-//         icon: <RotateCwIcon />,
-//       },
-//     ],
-//   },
-//   {
-//     key: "memo",
-//     name: "Memo Management",
-//     path: "/memo",
-//     icon: <PersonStandingIcon />,
-//   },
-//   {
-//     key: "cars",
-//     name: "Manage Cars",
-//     path: "/cars",
-//     icon: <CarIcon />,
-//   },
-//   {
-//     key: "accounts",
-//     name: "Accounts & Finance",
-//     icon: <PersonStandingIcon />,
-//     children: [
-//       { key: "accounts-main", name: "Accounts", path: "/accounts" },
-//       {
-//         key: "account-statements",
-//         name: "Account Statements",
-//         path: "/accounts/statements",
-//       },
-//       {
-//         key: "general-ledger",
-//         name: "General Ledger",
-//         path: "/accounts/ledger",
-//       },
-//       {
-//         key: "supplier-payment",
-//         name: "Supplier Payment",
-//         path: "/accounts/supplier-payment",
-//       },
-//       {
-//         key: "posting-invoices",
-//         name: "Posting Invoices",
-//         path: "/accounts/invoices",
-//       },
-//       {
-//         key: "user-expenses",
-//         name: "User Expenses",
-//         path: "/accounts/expenses",
-//       },
-//     ],
-//   },
-//   {
-//     key: "hrms",
-//     name: "HRMS",
-//     icon: <PersonStandingIcon />,
-//     children: [
-//       { key: "hrms-employee", name: "Add Employee", path: "/hrms/employee" },
-//       { key: "hrms-payroll", name: "General Payroll", path: "/hrms/payroll" },
-//       {
-//         key: "hrms-announcements",
-//         name: "Announcements",
-//         path: "/hrms/announcements",
-//       },
-//       { key: "hrms-holidays", name: "Holidays", path: "/hrms/holidays" },
-//     ],
-//   },
-//   {
-//     key: "customers",
-//     name: "Customers",
-//     path: "/customers",
-//     icon: <Users />,
-//   },
-//   {
-//     key: "reports",
-//     name: "Reports",
-//     path: "/reports",
-//     icon: <FileText />,
-//   },
-//   {
-//     key: "settings",
-//     name: "Settings",
-//     path: "/settings",
-//     icon: <SettingsIcon />,
-//   },
-// ];
-
-import { Button } from '@/components/ui/button';
-import Transaction from '@/pages/transaction';
 import {
   Users,
-  FileText,
   LayoutDashboardIcon,
-  CheckCircleIcon,
-  CarIcon,
-  BriefcaseIcon,
   SettingsIcon,
   PenToolIcon,
-  PlusIcon,
-  RotateCwIcon,
-  Package,
-  PersonStandingIcon,
-  Search,
-  Plus,
-  RefreshCcw,
-  Settings,
   Tag,
   Gift,
   Newspaper,
@@ -194,6 +11,7 @@ import {
   Lightbulb,
   Share2,
   CreditCard,
+  MessageCircle,
 } from 'lucide-react';
 
 export const sidebarMenus = {
@@ -351,4 +169,13 @@ export const sidebarMenus = {
       title: 'Home Transaction',
     },
   ],
+  chat: [
+    {
+      key: 'chat-home',
+      name: 'Manage Chat',
+      path: '/chat',
+      icon: MessageCircle,
+      title: 'Home Chat',
+    }
+  ]
 };
