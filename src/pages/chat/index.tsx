@@ -223,12 +223,12 @@ function Chat() {
   return (
     <div className='flex h-full bg-background'>
       {/* Mobile menu button */}
-      <button
+      {/* <button
         className='md:hidden absolute top-4 left-4 z-50'
         onClick={() => setShowSidebar(!showSidebar)}
       >
         {showSidebar ? <X size={24} /> : <Menu size={24} />}
-      </button>
+      </button> */}
 
       {/* Left sidebar - Users list */}
       <div
