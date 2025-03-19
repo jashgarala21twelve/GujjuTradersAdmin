@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { CircleLoading } from '@/components/loader';
 import PageTitle from '@/components/pageTitle';
@@ -13,6 +13,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import AlertDialogComponent from '@/components/alertDialog/alertConfirmDialog';
 import { Button } from '@/components/ui/button';
 import { ACCOUNT_STATUS } from '@/utils/constants';
+import { activeInactiveUserHook } from '@/hooks/api/users/useUsers';
+import Toast from '@/components/toast/commonToast';
 
 interface UserResponse {
   _id: string;
@@ -30,9 +32,19 @@ interface UserResponse {
 const User: FC = () => {
   const { userId } = useParams<{ userId: string }>();
 
-  const { data, error, isLoading } = useUser(userId);
+  const { data, error, isLoading, refetch } = useUser(userId);
   const [isInactiveUserAlertOpen, setIsInactiveUserAlertOpen] = useState(false);
   const [isActiveUserAlertOpen, setActiveUserAlertOpen] = useState(false);
+
+  const onSuccessHandler = (data: any) => {
+    Toast('success', data?.message || 'News created successfully');
+  };
+  const { mutate: activeInactive, isSuccess: activateUserSuccess } =
+    activeInactiveUserHook(onSuccessHandler);
+
+  useEffect(() => {
+    if (activateUserSuccess) refetch();
+  }, [activateUserSuccess]);
 
   if (isLoading) {
     return (
@@ -50,6 +62,15 @@ const User: FC = () => {
     );
   }
 
+  const handleActiveUser = (value: number) => {
+    const payload = {
+      userId: userId,
+      action: value,
+    };
+    activeInactive(payload);
+    console.log('Payload:>>', payload);
+  };
+
   const userData: UserResponse = data?.data || null;
 
   return !userData ? (
@@ -66,14 +87,17 @@ const User: FC = () => {
           <CardHeader>
             <div className='flex items-center space-x-4'>
               <Avatar className='w-[70px] h-[70px] overflow-hidden rounded-md'>
-                <img
-                  src={userData?.profile_image}
-                  className='h-full w-full object-cover'
-                  alt='Profile Icon'
-                />
-                <AvatarFallback className='rounded-md'>
-                  {userData?.full_name[0].toUpperCase()}
-                </AvatarFallback>
+                {userData?.profile_image ? (
+                  <img
+                    src={userData?.profile_image}
+                    className='h-full w-full object-cover'
+                    alt='Profile Icon'
+                  />
+                ) : (
+                  <AvatarFallback className='rounded-md'>
+                    {userData?.full_name[0].toUpperCase()}
+                  </AvatarFallback>
+                )}
               </Avatar>
               <div>
                 <div className='text-xl font-semibold'>
@@ -110,7 +134,7 @@ const User: FC = () => {
             </div>
           </CardFooter>
           <div className='flex w-full justify-end space-x-3 p-4'>
-            <p>Change User Status: </p>
+            <p>User Account Status: </p>
             {userData.account_status === ACCOUNT_STATUS.ACTIVE ? (
               <Button
                 variant={'destructive'}
@@ -134,7 +158,7 @@ const User: FC = () => {
         description=''
         confirmText='Activate User'
         cancelText='Cancel'
-        onConfirm={() => {}}
+        onConfirm={() => handleActiveUser(1)}
         confirmButtonClass='bg-primary  hover:bg-primary-600'
         open={isActiveUserAlertOpen}
         setOpen={setActiveUserAlertOpen}
@@ -144,7 +168,7 @@ const User: FC = () => {
         description=''
         confirmText='InActive User'
         cancelText='Cancel'
-        onConfirm={() => {}}
+        onConfirm={() => handleActiveUser(2)}
         confirmButtonClass='bg-destructive text-white hover:bg-red-600'
         open={isInactiveUserAlertOpen}
         setOpen={setIsInactiveUserAlertOpen}

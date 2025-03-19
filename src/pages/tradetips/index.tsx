@@ -2,6 +2,7 @@ import CopyToClipboard from '@/components/copyToClipBoard';
 import DynamicDataTable from '@/components/datatable/datatable';
 import { CircleLoading } from '@/components/loader';
 import PageTitle from '@/components/pageTitle';
+import Toast from '@/components/toast/commonToast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,7 +15,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { useTradeTipsList, useUpdateTradeTip } from '@/hooks/api/tradetips';
+import {
+  useDeleteTradeTipHook,
+  useTradeTipsList,
+  useUpdateTradeTip,
+} from '@/hooks/api/tradetips';
 import { convertToFormData } from '@/utils/helper';
 import { ColumnDef } from '@tanstack/react-table';
 import { debounce } from 'lodash';
@@ -45,6 +50,14 @@ const TradeTips = () => {
     search: search,
     ...searchQueryParams,
   });
+
+  const onSuccessHandler = (data: any) => {
+    Toast('success', data?.message || 'News created successfully');
+  };
+
+  const { mutate: deleteFaq, isSuccess: isDeleteSuccess } =
+    useDeleteTradeTipHook(onSuccessHandler);
+
   useEffect(() => {
     if (apiResponse) {
       const { data: Data } = apiResponse;
@@ -66,9 +79,10 @@ const TradeTips = () => {
     refetch,
     search,
     searchQueryParams,
+    isDeleteSuccess,
   ]);
-  const handlePageChange = page => {
-    setPagination(prev => {
+  const handlePageChange = (page) => {
+    setPagination((prev) => {
       return {
         ...prev,
         currentPage: page,
@@ -91,9 +105,9 @@ const TradeTips = () => {
     updateTradeTip({ tradeTipId, data: formData });
   };
   const debouncedSearch = useCallback(
-    debounce(value => {
+    debounce((value) => {
       setSearch(value);
-      setPagination(prev => {
+      setPagination((prev) => {
         return {
           ...prev,
           currentPage: 1,
@@ -102,7 +116,12 @@ const TradeTips = () => {
     }, 500), // 500ms delay
     []
   );
-  const onHandleSearch = value => {
+
+  const handleDelete = (id: string) => {
+    deleteFaq(id);
+  };
+
+  const onHandleSearch = (value) => {
     setSearchInput(value);
     debouncedSearch(value);
   };
@@ -111,11 +130,11 @@ const TradeTips = () => {
       accessorKey: '_id',
       header: ({ column }) => (
         <Button
-          variant="ghost"
+          variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           ID
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       ),
       cell: ({ row }) => (
@@ -133,15 +152,15 @@ const TradeTips = () => {
         console.log(stockLogo, 'stockLogo');
         if (!stockLogo)
           return (
-            <div className="h-10 w-10 bg-secondary  font-bold  rounded-full flex items-center justify-center ">
+            <div className='h-10 w-10 bg-secondary  font-bold  rounded-full flex items-center justify-center '>
               {stockLogoLetter}
             </div>
           );
         return (
           <img
             src={stockLogo}
-            alt="Stock Logo"
-            className="h-10 w-10 rounded-full object-cover "
+            alt='Stock Logo'
+            className='h-10 w-10 rounded-full object-cover '
           />
         );
       },
@@ -150,18 +169,18 @@ const TradeTips = () => {
       accessorKey: 'stockSymbol',
       header: ({ column }) => (
         <Button
-          variant="ghost"
+          variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Symbol
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       ),
       cell: ({ row }) => (
         <div>
           <CopyToClipboard
             text={row.getValue('stockSymbol')}
-            textStyle="font-semibold"
+            textStyle='font-semibold'
           />
         </div>
       ),
@@ -179,7 +198,7 @@ const TradeTips = () => {
       accessorKey: 'tradeType',
       header: 'Trade Type',
       cell: ({ row }) => (
-        <div className="font-medium">{row.getValue('tradeType')}</div>
+        <div className='font-medium'>{row.getValue('tradeType')}</div>
       ),
     },
     // {
@@ -217,11 +236,11 @@ const TradeTips = () => {
       accessorKey: 'formattedCreatedAt',
       header: ({ column }) => (
         <Button
-          variant="ghost"
+          variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Created At
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       ),
       cell: ({ row }) => <div>{row.getValue('formattedCreatedAt')}</div>,
@@ -232,11 +251,11 @@ const TradeTips = () => {
       cell: ({ row }) => (
         <div>
           {row.getValue('active') ? (
-            <span className="bg-green-100 text-green-800 px-2 py-1 rounded">
+            <span className='bg-green-100 text-green-800 px-2 py-1 rounded'>
               Active
             </span>
           ) : (
-            <span className="bg-red-100 text-red-800 px-2 py-1 rounded">
+            <span className='bg-red-100 text-red-800 px-2 py-1 rounded'>
               Inactive
             </span>
           )}
@@ -250,10 +269,10 @@ const TradeTips = () => {
         const active = row.getValue('active');
         const _id = row.getValue('_id');
         return (
-          <div className="flex w-full items-center ">
+          <div className='flex w-full items-center '>
             <Switch
               checked={active}
-              onCheckedChange={value => {
+              onCheckedChange={(value) => {
                 handleActiveInactiveTradeTip(_id, value);
               }}
             />
@@ -263,20 +282,29 @@ const TradeTips = () => {
     },
     {
       id: 'actions',
-      enableHiding: false,
+      header: 'Actions',
       cell: ({ row }) => {
         const stock = row.original;
         return (
-          <div className="flex w-full items-center ">
+          <div className='flex w-full items-center '>
             {updateTradeTipPending ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className='mr-2 h-4 w-4 animate-spin' />
             ) : (
-              <Link
-                to={`/tradetips/view/${stock._id}`}
-                className="hover:underline"
-              >
-                View
-              </Link>
+              <div className='flex gap-2'>
+                <Link
+                  to={`/tradetips/view/${stock._id}`}
+                  className='hover:underline'
+                >
+                  View
+                </Link>
+                <Link
+                  to='#'
+                  className='hover:underline text-red-500'
+                  onClick={() => handleDelete(stock._id)}
+                >
+                  Delete
+                </Link>
+              </div>
             )}
           </div>
         );
@@ -340,7 +368,7 @@ const TradeTips = () => {
     }, {})
   );
   const handleFilterChange = (filteredValues, value) => {
-    setSelectedFilterValues(prev => ({
+    setSelectedFilterValues((prev) => ({
       ...prev,
       [filteredValues.col_key]: value,
     }));
@@ -352,14 +380,14 @@ const TradeTips = () => {
         searchQueryParams;
       setSearchQueryParams(newSearchQueryParams);
     } else {
-      setSearchQueryParams(prev => {
+      setSearchQueryParams((prev) => {
         return {
           ...prev,
           [filteredValues.queryKey]: value,
         };
       });
     }
-    setPagination(prev => {
+    setPagination((prev) => {
       return {
         ...prev,
         currentPage: 1,
@@ -369,41 +397,41 @@ const TradeTips = () => {
 
   return (
     <div>
-      <PageTitle title="Trade Tips" />
+      <PageTitle title='Trade Tips' />
 
-      <div className="border rounded-xl p-4 flex flex-start flex-col min-h-[700px] ">
+      <div className='border rounded-xl p-4 flex flex-start flex-col min-h-[700px] '>
         {/* ✅ Loader now fills the entire dashboard area */}
 
         {/* ✅ Error Message */}
         {isError && (
-          <div className="flex flex-1 items-center justify-center">
-            <p className="text-red-500">Error fetching data</p>
+          <div className='flex flex-1 items-center justify-center'>
+            <p className='text-red-500'>Error fetching data</p>
           </div>
         )}
 
-        <div className="grid grid-cols-6 gap-2 ">
+        <div className='grid grid-cols-6 gap-2 '>
           <Input
-            placeholder="Search Trade Tips"
+            placeholder='Search Trade Tips'
             value={searchInput}
-            onChange={e => onHandleSearch(e.target.value)}
-            className="max-w-sm"
+            onChange={(e) => onHandleSearch(e.target.value)}
+            className='max-w-sm'
           />
-          {filters.map(filter =>
+          {filters.map((filter) =>
             filter.filedType === 'select' ? (
               <>
                 <Select
                   key={filter.col_key}
                   value={selectedFilterValues[filter.col_key]}
-                  onValueChange={value => handleFilterChange(filter, value)}
+                  onValueChange={(value) => handleFilterChange(filter, value)}
                 >
-                  <SelectTrigger className="max-w-52">
+                  <SelectTrigger className='max-w-52'>
                     <SelectValue placeholder={filter.placeHolder} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="All">
+                    <SelectItem value='All'>
                       {filter.defaultLabelValue || 'All'}
                     </SelectItem>
-                    {filter.options.map(option => (
+                    {filter.options.map((option) => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}
                       </SelectItem>
@@ -415,15 +443,15 @@ const TradeTips = () => {
               <Input
                 key={filter.col_key}
                 placeholder={filter.placeHolder}
-                onChange={e => handleFilterChange(filter, e.target.value)}
-                className="max-w-sm"
+                onChange={(e) => handleFilterChange(filter, e.target.value)}
+                className='max-w-sm'
               />
             )
           )}
         </div>
         {isPending && (
-          <div className="h-[700px] flex items-center justify-center">
-            <Loader2 className="mr-2 h-10 w-10 animate-spin" />
+          <div className='h-[700px] flex items-center justify-center'>
+            <Loader2 className='mr-2 h-10 w-10 animate-spin' />
           </div>
         )}
         {isSuccess && (
