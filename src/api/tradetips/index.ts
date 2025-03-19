@@ -29,3 +29,7 @@ export const getTradeTips = async (params: Record<string, string>) => {
 export const getTradeTipById = async (tradeTipId: string) => {
   return request("get", TRADETIPS_ROUTES.TRADE_TIP + `/${tradeTipId}`);
 };
+
+export const deleteTradeTip = async (id: string) => {
+  return request('delete', TRADETIPS_ROUTES.TRADE_TIP + '/' + id);
+};
