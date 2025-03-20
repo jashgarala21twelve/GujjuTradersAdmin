@@ -7,6 +7,8 @@ import MediaAssetsNews from '@/pages/mediaAssets/new';
 import { CreateNews } from '@/pages/news/create';
 import { EditViewNews } from '@/pages/news/view';
 import ViewNewCategory from '@/pages/newscategory/view';
+import Notifications from '@/pages/notifications';
+import { CreateNotification } from '@/pages/notifications/create';
 import Transaction from '@/pages/transaction';
 import TransactionView from '@/pages/transaction/view';
 import { lazy } from 'react';
@@ -120,6 +122,14 @@ const ProtectedRoutes: RouteObject[] = [
       { path: '/media-assets/home', element: <MediaAssetsHome /> },
       { path: '/media-assets/news', element: <MediaAssetsNews /> },
     ],
+  },
+  {
+    path: '/notifications',
+    element: <Notifications />,
+  },
+  {
+    path: '/notifications/create',
+    element: <CreateNotification />,
   },
   { path: '/plans', element: <Plans /> },
   { path: '/plans/create', element: <CreatePlan /> },
