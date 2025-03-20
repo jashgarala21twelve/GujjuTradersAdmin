@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useNavigation, useParams } from 'react-router-dom';
 import { useGetStockBySymbol } from '@/hooks/api/stocks';
 import PageTitle from '@/components/pageTitle';
 import { Button } from '@/components/ui/button';
@@ -19,7 +19,11 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import Toast from '@/components/toast/commonToast';
-import { useGetTradeTip, useUpdateTradeTip } from '@/hooks/api/tradetips';
+import {
+  useDeleteTradeTipHook,
+  useGetTradeTip,
+  useUpdateTradeTip,
+} from '@/hooks/api/tradetips';
 import { convertToFormData } from '@/utils/helper';
 import dayjs from 'dayjs';
 import { TRADE_TYPE } from '@/utils/constants';
@@ -61,6 +65,8 @@ interface ImageState {
 
 const UpdateTradeTip = () => {
   const { tradeTipId } = useParams();
+
+  const router = useNavigate();
   const [tradeTipData, setTradeTipData] = useState({});
   const {
     data: tradeTipResponse,
@@ -70,7 +76,7 @@ const UpdateTradeTip = () => {
     refetch: refetchTradeTip,
   } = useGetTradeTip(tradeTipId as string);
 
-  const onSuccessTradeTipUpdate = data => {
+  const onSuccessTradeTipUpdate = (data) => {
     Toast('success', data?.message || 'Trade Tip Updated Successfully');
     refetchTradeTip();
   };
@@ -199,7 +205,7 @@ const UpdateTradeTip = () => {
     const file = e.target.files?.[0];
     if (file) {
       const newImageUrl = URL.createObjectURL(file);
-      setImageState(prev => ({
+      setImageState((prev) => ({
         currentImage: newImageUrl,
         originalImage: prev.originalImage,
         isModified: true,
@@ -208,6 +214,21 @@ const UpdateTradeTip = () => {
       setValue('stockLogo', file);
       setValue('deleteStockLogo', false);
     }
+  };
+
+  const onSuccessHandler = (data: any) => {
+    Toast('success', data?.message || 'News created successfully');
+    router('/tradetips');
+  };
+
+  const {
+    mutate: deleteFaq,
+    isSuccess: isDeleteSuccess,
+    isPending: isDeletePending,
+  } = useDeleteTradeTipHook(onSuccessHandler);
+
+  const handleDelete = () => {
+    deleteFaq(tradeTipId as string);
   };
 
   const handleRemoveImage = () => {
@@ -220,11 +241,11 @@ const UpdateTradeTip = () => {
     setValue('deleteStockLogo', true);
   };
 
-  const onSubmit = data => {
+  const onSubmit = (data) => {
     const formData = convertToFormData(data);
     updateTradeTip({ tradeTipId, data: formData });
   };
-  const onError = errors => {
+  const onError = (errors) => {
     console.log('Validation Errors:', errors);
 
     // Extract the first error message dynamically
@@ -235,8 +256,8 @@ const UpdateTradeTip = () => {
   };
   if (isPending) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className='flex items-center justify-center h-64'>
+        <Loader2 className='h-8 w-8 animate-spin' />
       </div>
     );
   }
@@ -245,37 +266,37 @@ const UpdateTradeTip = () => {
     return <div>{tradeTipError.message}</div>;
   }
   return (
-    <div className="space-y-6">
-      <Card className="">
-        <CardHeader className="space-y-4 md:space-y-0 md:flex md:flex-row md:items-center">
-          <div className="w-full">
-            <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+    <div className='space-y-6'>
+      <Card className=''>
+        <CardHeader className='space-y-4 md:space-y-0 md:flex md:flex-row md:items-center'>
+          <div className='w-full'>
+            <div className='flex flex-col md:flex-row md:items-center gap-4 md:gap-6'>
               {/* Stock Symbol and Status */}
-              <div className="flex items-center gap-3">
-                <p className="text-lg md:text-xl">
-                  <span className="bg-secondary p-2 rounded-md font-medium">
+              <div className='flex items-center gap-3'>
+                <p className='text-lg md:text-xl'>
+                  <span className='bg-secondary p-2 rounded-md font-medium'>
                     {tradeTipData?.stockSymbol}
                   </span>
                 </p>
                 {tradeTipData?.active === true ? (
-                  <span className="inline-flex items-center px-2.5 py-1 rounded text-sm font-medium bg-green-100 text-green-800">
+                  <span className='inline-flex items-center px-2.5 py-1 rounded text-sm font-medium bg-green-100 text-green-800'>
                     Active
                   </span>
                 ) : (
-                  <span className="inline-flex items-center px-2.5 py-1 rounded text-sm font-medium bg-red-100 text-red-800">
+                  <span className='inline-flex items-center px-2.5 py-1 rounded text-sm font-medium bg-red-100 text-red-800'>
                     Inactive
                   </span>
                 )}
               </div>
 
               {/* Timestamps */}
-              <div className="space-y-1 text-sm text-muted-foreground md:ml-auto">
-                <p className="flex items-center gap-2">
-                  <span className="font-medium">Created:</span>
+              <div className='space-y-1 text-sm text-muted-foreground md:ml-auto'>
+                <p className='flex items-center gap-2'>
+                  <span className='font-medium'>Created:</span>
                   {dayjs(tradeTipData.createdAt).format('MMM D, YYYY, h:mm A')}
                 </p>
-                <p className="flex items-center gap-2">
-                  <span className="font-medium">Updated:</span>
+                <p className='flex items-center gap-2'>
+                  <span className='font-medium'>Updated:</span>
                   {dayjs(tradeTipData.updatedAt).format('MMM D, YYYY, h:mm A')}
                 </p>
               </div>
@@ -285,47 +306,47 @@ const UpdateTradeTip = () => {
         <CardContent>
           <form
             onSubmit={handleSubmit(onSubmit, onError)}
-            className="space-y-6 relative"
+            className='space-y-6 relative'
           >
             {/* Stock Information Section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input {...register('stockId')} disabled placeholder="Stock ID" />
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+              <Input {...register('stockId')} disabled placeholder='Stock ID' />
               <Input
                 {...register('stockSymbol')}
                 disabled
-                placeholder="Symbol"
+                placeholder='Symbol'
               />
               <Input
                 {...register('stockName')}
                 disabled
-                placeholder="Stock Name"
+                placeholder='Stock Name'
               />
               <Input
                 {...register('exchange')}
                 disabled
-                placeholder="Exchange"
+                placeholder='Exchange'
               />
             </div>
 
             {/* Trade Type and Term Section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <Controller
-                name="tradeType"
+                name='tradeType'
                 control={control}
                 render={({ field }) => (
                   <div>
-                    <label className="block mb-2">Trade Type</label>
+                    <label className='block mb-2'>Trade Type</label>
                     <Select
                       key={field.value}
                       defaultValue={field.value}
                       onValueChange={field.onChange}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select trade type" />
+                        <SelectValue placeholder='Select trade type' />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="BUY">Buy</SelectItem>
-                        <SelectItem value="SELL">Sell</SelectItem>
+                        <SelectItem value='BUY'>Buy</SelectItem>
+                        <SelectItem value='SELL'>Sell</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -333,23 +354,23 @@ const UpdateTradeTip = () => {
               />
 
               <Controller
-                name="tradeTerm"
+                name='tradeTerm'
                 control={control}
                 render={({ field }) => (
                   <div>
-                    <label className="block mb-2">Trade Term</label>
+                    <label className='block mb-2'>Trade Term</label>
                     <Select
                       key={field.value}
                       defaultValue={field.value}
                       onValueChange={field.onChange}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select duration" />
+                        <SelectValue placeholder='Select duration' />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="1">SHORT TERM</SelectItem>
-                        <SelectItem value="2">MEDIUM TERM</SelectItem>
-                        <SelectItem value="3">LONG TERM</SelectItem>
+                        <SelectItem value='1'>SHORT TERM</SelectItem>
+                        <SelectItem value='2'>MEDIUM TERM</SelectItem>
+                        <SelectItem value='3'>LONG TERM</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -358,30 +379,30 @@ const UpdateTradeTip = () => {
             </div>
 
             {/* Trade Details Section */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
               <div>
-                <label className="block mb-2">Entry Range</label>
-                <Input {...register('entryRange')} placeholder="e.g., 54-56" />
+                <label className='block mb-2'>Entry Range</label>
+                <Input {...register('entryRange')} placeholder='e.g., 54-56' />
                 {errors.entryRange && (
-                  <p className="text-red-500 text-sm mt-1">
+                  <p className='text-red-500 text-sm mt-1'>
                     {errors.entryRange.message}
                   </p>
                 )}
               </div>
               <div>
-                <label className="block mb-2">Stop Loss</label>
-                <Input {...register('stopLoss')} type="number" />
+                <label className='block mb-2'>Stop Loss</label>
+                <Input {...register('stopLoss')} type='number' />
                 {errors.stopLoss && (
-                  <p className="text-red-500 text-sm mt-1">
+                  <p className='text-red-500 text-sm mt-1'>
                     {errors.stopLoss.message}
                   </p>
                 )}
               </div>
               <div>
-                <label className="block mb-2">Duration</label>
+                <label className='block mb-2'>Duration</label>
                 <Input {...register('duration')} />
                 {errors.duration && (
-                  <p className="text-red-500 text-sm mt-1">
+                  <p className='text-red-500 text-sm mt-1'>
                     {errors.duration.message}
                   </p>
                 )}
@@ -390,38 +411,38 @@ const UpdateTradeTip = () => {
 
             {/* Targets Section */}
             <div>
-              <div className="flex items-center justify-between mb-4">
-                <label className="block">Targets</label>
+              <div className='flex items-center justify-between mb-4'>
+                <label className='block'>Targets</label>
                 <Button
-                  type="button"
-                  variant="secondary"
+                  type='button'
+                  variant='secondary'
                   onClick={() => append('')}
-                  className="flex items-center gap-2"
+                  className='flex items-center gap-2'
                 >
-                  <Plus className="h-4 w-4" />
+                  <Plus className='h-4 w-4' />
                   Add Target
                 </Button>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
                 {fields.map((field, index) => (
-                  <div key={field.id} className="flex gap-2">
+                  <div key={field.id} className='flex gap-2'>
                     <Input
                       {...register(`targets.${index}`)}
                       placeholder={`Target ${index + 1}`}
                     />
                     <Button
-                      type="button"
-                      variant="ghost"
+                      type='button'
+                      variant='ghost'
                       onClick={() => remove(index)}
-                      className="px-2"
+                      className='px-2'
                     >
-                      <Trash2 className="h-4 w-4 text-red-500" />
+                      <Trash2 className='h-4 w-4 text-red-500' />
                     </Button>
                   </div>
                 ))}
               </div>
               {errors.targets && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className='text-red-500 text-sm mt-1'>
                   {errors.targets.message ||
                     errors.targets?.root?.message ||
                     errors.targets[0]?.message}
@@ -430,37 +451,37 @@ const UpdateTradeTip = () => {
             </div>
             {/* Potential Return */}
             <div>
-              <label className="block mb-2">Potential Return</label>
-              <Input {...register('potentialReturn')} placeholder="e.g., 12%" />
+              <label className='block mb-2'>Potential Return</label>
+              <Input {...register('potentialReturn')} placeholder='e.g., 12%' />
               {errors.potentialReturn && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className='text-red-500 text-sm mt-1'>
                   {errors.potentialReturn.message}
                 </p>
               )}
             </div>
             {/* Stock Logo Section */}
             <div>
-              <label className="block mb-2">Stock Logo</label>
-              <div className="space-y-4">
+              <label className='block mb-2'>Stock Logo</label>
+              <div className='space-y-4'>
                 <Input
-                  type="file"
-                  accept="image/*"
+                  type='file'
+                  accept='image/*'
                   onChange={handleFileChange}
-                  className="mb-4"
+                  className='mb-4'
                 />
                 {imageState.currentImage && (
-                  <div className="flex items-start space-x-4">
+                  <div className='flex items-start space-x-4'>
                     <img
                       src={imageState.currentImage}
-                      alt="Stock Logo"
-                      className="h-32 w-32 object-cover rounded-md border"
+                      alt='Stock Logo'
+                      className='h-32 w-32 object-cover rounded-md border'
                     />
-                    <div className="space-y-2">
+                    <div className='space-y-2'>
                       <Button
-                        type="button"
-                        variant="destructive"
+                        type='button'
+                        variant='destructive'
                         onClick={handleRemoveImage}
-                        className="w-full"
+                        className='w-full'
                       >
                         Remove Image
                       </Button>
@@ -472,29 +493,29 @@ const UpdateTradeTip = () => {
 
             {/* Description Section */}
             <div>
-              <label className="block mb-2">Description</label>
+              <label className='block mb-2'>Description</label>
               <Textarea
                 {...register('description')}
-                placeholder="Enter trade description"
-                className="h-24"
+                placeholder='Enter trade description'
+                className='h-24'
               />
             </div>
 
             <Controller
-              name="plans"
+              name='plans'
               control={control}
               render={({ field }) => (
-                <div className="mb-6 ">
-                  <div className="flex items-center mb-3 gap-5">
-                    <label className="block text-sm font-medium ">
+                <div className='mb-6 '>
+                  <div className='flex items-center mb-3 gap-5'>
+                    <label className='block text-sm font-medium '>
                       Subscription Plans
                     </label>
                     <div>
                       <Controller
-                        name="freeTip"
+                        name='freeTip'
                         control={control}
                         render={({ field }) => (
-                          <div className="flex items-center space-x-2">
+                          <div className='flex items-center space-x-2'>
                             <Switch
                               checked={field.value}
                               onCheckedChange={(checked: boolean) => {
@@ -512,38 +533,38 @@ const UpdateTradeTip = () => {
                       />
                     </div>
                   </div>
-                  <div className=" border rounded-lg shadow-sm overflow-hidden">
-                    {plans?.map(plan => (
+                  <div className=' border rounded-lg shadow-sm overflow-hidden'>
+                    {plans?.map((plan) => (
                       <label
                         key={plan._id}
                         htmlFor={`plan-${plan._id}`}
                         className={`flex items-center justify-between p-4 border-b transition-colors cursor-pointer `}
                       >
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <h3 className="font-medium ">{plan?.name}</h3>
-                            <span className=" text-xs px-2 py-0.5 rounded-full">
+                        <div className='flex-1'>
+                          <div className='flex items-center gap-2'>
+                            <h3 className='font-medium '>{plan?.name}</h3>
+                            <span className=' text-xs px-2 py-0.5 rounded-full'>
                               {plan?.planKey}
                             </span>
                           </div>
 
-                          <div className="mt-1 flex items-center gap-4 text-sm ">
-                            <div className="flex items-center">
-                              <span className="font-semibold ">
+                          <div className='mt-1 flex items-center gap-4 text-sm '>
+                            <div className='flex items-center'>
+                              <span className='font-semibold '>
                                 ₹{plan?.price?.monthly}
                               </span>
-                              <span className="ml-1">/ month</span>
+                              <span className='ml-1'>/ month</span>
                             </div>
 
-                            <div className="flex items-center">
-                              <span className="font-semibold ">
+                            <div className='flex items-center'>
+                              <span className='font-semibold '>
                                 ₹{plan?.price?.yearly}
                               </span>
-                              <span className="ml-1">/ year</span>
+                              <span className='ml-1'>/ year</span>
                             </div>
 
                             {plan?.price?.discount > 0 && (
-                              <div className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">
+                              <div className='bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full'>
                                 {plan?.price?.discount}% off
                               </div>
                             )}
@@ -555,16 +576,16 @@ const UpdateTradeTip = () => {
                             disabled={isFreeTip}
                             id={`plan-${plan._id}`}
                             checked={field.value?.includes(plan._id)}
-                            onCheckedChange={checked => {
+                            onCheckedChange={(checked) => {
                               return checked
                                 ? field.onChange([...field.value, plan._id])
                                 : field.onChange(
                                     field.value?.filter(
-                                      value => value !== plan._id
+                                      (value) => value !== plan._id
                                     )
                                   );
                             }}
-                            className="h-5 w-5 text-blue-600"
+                            className='h-5 w-5 text-blue-600'
                           />
                         </div>
                       </label>
@@ -576,10 +597,10 @@ const UpdateTradeTip = () => {
 
             {/* Active Status Section */}
             <Controller
-              name="active"
+              name='active'
               control={control}
               render={({ field }) => (
-                <div className="flex items-center space-x-2">
+                <div className='flex items-center space-x-2'>
                   <Switch
                     checked={field.value}
                     onCheckedChange={field.onChange}
@@ -590,20 +611,21 @@ const UpdateTradeTip = () => {
             />
 
             {/* Submit Button */}
-            <div className="grid grid-cols-none gap-5 md:grid-cols-2">
+            <div className='grid grid-cols-none gap-5 md:grid-cols-2'>
               <Button
-                type="submit"
-                className="w-full text-white font-semibold"
-                variant="default"
+                type='submit'
+                className='w-full text-white font-semibold'
+                variant='default'
               >
                 {updateTradeTipPending ? 'Updating...' : 'Update Trade Tip'}
               </Button>
               <Button
-                type="submit"
-                className="w-full text-white font-semibold"
-                variant="destructive"
+                type='submit'
+                className='w-full text-white font-semibold'
+                variant='destructive'
+                onClick={handleDelete}
               >
-                Delete Trade Tip
+                {isDeletePending ? 'Deleting...' : 'Delete Trade Tip'}
               </Button>
             </div>
           </form>

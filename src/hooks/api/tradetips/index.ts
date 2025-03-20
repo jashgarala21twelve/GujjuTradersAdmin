@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   createTradeTip,
+  deleteTradeTip,
   getTradeTipById,
   getTradeTips,
   updateTradeTip,
@@ -43,5 +44,15 @@ export const useGetTradeTip = (tradeTipId: string) => {
     refetchOnMount:true,
 
     // staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useDeleteTradeTipHook = (onSuccessHandler: any) => {
+  return useMutation({
+    mutationFn: deleteTradeTip,
+    retry: false,
+    onSuccess: (data) => {
+      onSuccessHandler(data);
+    },
   });
 };

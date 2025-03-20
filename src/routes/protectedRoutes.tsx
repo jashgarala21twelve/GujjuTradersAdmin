@@ -1,3 +1,4 @@
+import Chat from '@/pages/chat';
 import { CreateFaq } from '@/pages/faq/create';
 import { FaqView } from '@/pages/faq/view';
 import MediaAssets from '@/pages/mediaAssets';
@@ -8,6 +9,8 @@ import { EditViewNews } from '@/pages/news/view';
 import ViewNewCategory from '@/pages/newscategory/view';
 import Notifications from '@/pages/notifications';
 import { CreateNotification } from '@/pages/notifications/create';
+import Transaction from '@/pages/transaction';
+import TransactionView from '@/pages/transaction/view';
 import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
 
@@ -132,6 +135,18 @@ const ProtectedRoutes: RouteObject[] = [
   { path: '/plans/create', element: <CreatePlan /> },
   { path: '/plans/view/:planId', element: <UpdatePlan /> },
   { path: '/settings', element: <Settings /> },
+  {
+    path: '/transaction',
+    element: <Transaction />,
+  },
+  {
+    path: '/chat',
+    element: <Chat />,
+  },
+  {
+    path: '/transaction/view/:id',
+    element: <TransactionView />,
+  },
 ];
 
 export default ProtectedRoutes;
