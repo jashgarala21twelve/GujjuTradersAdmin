@@ -55,7 +55,7 @@ export function CreateNotification() {
     console.log("DATA:>>", data);
 
     const payload = {
-      topic: "general_user_notificatione",
+      topic: "general_user_notification",
       title: data.title,
       body: data.description,
     };
