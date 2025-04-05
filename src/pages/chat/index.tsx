@@ -3,21 +3,17 @@
 import type React from 'react';
 
 import { useState, useRef, useEffect } from 'react';
-import {
-  User,
-  Send,
-  Search,
-  Menu,
-  X,
-  MoreVertical,
-  Phone,
-  Video,
-} from 'lucide-react';
+import { Send, Search, Menu } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-
+import GujjuTraderLogo from '../../assets/gujjutradetslogo.png';
+import app from '@/firebaseConfig';
+import { getDatabase, ref, set, push, get } from 'firebase/database';
+import Toast from '@/components/toast/commonToast';
+import dayjs from 'dayjs';
+import { useUsers } from '@/hooks/api/users/useUsers';
 // Sample data - replace with your actual data source
 const users = [
   {
@@ -169,22 +165,40 @@ const sampleMessages = {
 };
 
 function Chat() {
-  const [selectedUser, setSelectedUser] = useState(users[0]);
+  const [userData, setUserData] = useState<any>();
+  const [selectedUser, setSelectedUser] = useState<any>([0]);
   const [messages, setMessages] = useState(sampleMessages);
   const [newMessage, setNewMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [showSidebar, setShowSidebar] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [messageList, setMessageList] = useState<any[]>([]);
+  const [selectedUserId, setSelectedUserId] = useState<number>(1);
+  const [updateMessageList, setUpdateMessageList] = useState(false);
 
   const userEmailId = sessionStorage.getItem('userEmail');
   const userName = userEmailId?.split('@')[0];
 
+  const { data, isLoading } = useUsers({});
+
+  useEffect(() => {
+    if (data?.data?.userList) {
+      setUserData(data?.data?.userList);
+      setSelectedUser(data?.data?.userList[0]);
+    }
+  }, [data?.data?.userList]);
+
   // Filter users based on search term
-  const filteredUsers = users.filter(
-    (user) =>
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  const filteredUsers = userData?.filter(
+    (user: any) =>
+      user.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // const filteredUsers = userData?.filter((user)=>{
+  //   console.log("USER:>>", user);
+
+  // })
 
   // Scroll to bottom of messages when messages change or user changes
   useEffect(() => {
@@ -197,11 +211,12 @@ function Chat() {
 
     const updatedMessages = {
       ...messages,
-      [selectedUser.id]: [
-        ...(messages[selectedUser.id as keyof typeof messages] || []),
+      [selectedUser._id]: [
+        ...(messages[selectedUser._id as keyof typeof messages] || []),
         {
           id: Date.now(),
           text: newMessage,
+
           sent: true,
           timestamp: new Date().toLocaleTimeString([], {
             hour: '2-digit',
@@ -213,6 +228,42 @@ function Chat() {
 
     setMessages(updatedMessages);
     setNewMessage('');
+
+    const db = getDatabase(app);
+    const messagesRef = ref(db, 'messages/' + selectedUserId);
+    set(push(messagesRef), {
+      id: selectedUserId,
+      text: newMessage,
+      sent: true,
+      date: new Date().toLocaleDateString(),
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+    })
+      .then(() => {
+        Toast('success', 'Message sent successfully');
+      })
+      .catch((error) => {
+        Toast('info', error.message || 'Failed to send message');
+      });
+
+    setUpdateMessageList(!updateMessageList);
+  };
+
+  useEffect(() => {
+    handleGetMessages();
+  }, [selectedUserId, updateMessageList]);
+
+  const handleGetMessages = async () => {
+    const db = getDatabase(app);
+    const messagesRef = ref(db, 'messages/' + selectedUserId);
+    const messagesList = await get(messagesRef);
+    if (messagesList.exists()) {
+      setMessageList(Object.values(messagesList.val()));
+    } else {
+      setMessageList([]);
+    }
   };
 
   // Handle pressing Enter to send a message
@@ -244,19 +295,11 @@ function Chat() {
           <div className='flex items-center justify-between mb-4'>
             <div className='flex items-center'>
               <Avatar className='h-10 w-10 mr-2'>
-                <AvatarImage
-                  src='/placeholder.svg?height=40&width=40'
-                  alt='Your Avatar'
-                />
-                <AvatarFallback>
-                  <User size={20} />
-                </AvatarFallback>
+                <img src={GujjuTraderLogo} alt='Your Avatar' />
               </Avatar>
               <div>
                 <h2 className='font-semibold'>{userName}</h2>
-                <p className='text-xs text-muted-foreground'>
-                  {userEmailId}
-                </p>
+                <p className='text-xs text-muted-foreground'>{userEmailId}</p>
               </div>
             </div>
           </div>
@@ -272,39 +315,54 @@ function Chat() {
           </div>
         </div>
 
-        <div className='flex-1 overflow-y-auto'>
-          {filteredUsers.map((user) => (
-            <div
-              key={user.id}
-              className={cn(
-                'flex items-center p-4 hover:bg-primary cursor-pointer border-b',
-                selectedUser.id === user.id && 'bg-primary'
-              )}
-              onClick={() => {
-                setSelectedUser(user);
-                setShowSidebar(false); // Hide sidebar on mobile after selection
-              }}
-            >
-              <div className='relative'>
-                <Avatar className='h-12 w-12 mr-3'>
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                {user.online && (
-                  <span className='absolute bottom-0 right-2 h-3 w-3 rounded-full bg-green-500 border-2 border-background'></span>
-                )}
-              </div>
-              <div className='flex-1 min-w-0'>
-                <div className='flex justify-between items-baseline'>
-                  <h3 className='font-medium truncate'>{user.name}</h3>
-                  <span className='text-xs whitespace-nowrap ml-2'>
-                    {user.lastSeen}
-                  </span>
-                </div>
-                <p className='text-sm  truncate'>{user.email}</p>
-              </div>
+        <div className='flex-1 h-[calc(100vh-250px)] overflow-y-auto'>
+          {isLoading ? (
+            <div className='flex items-center justify-center h-full'>
+              <p className='text-muted-foreground'>Loading users...</p>
             </div>
-          ))}
+          ) : (
+            filteredUsers?.map((user: any) => (
+              <div
+                key={user._id}
+                className={cn(
+                  'flex items-center p-4 hover:bg-primary cursor-pointer border-b',
+                  selectedUser._id === user._id && 'bg-primary'
+                )}
+                onClick={() => {
+                  setSelectedUser(user);
+                  setShowSidebar(false);
+                  setSelectedUserId(user._id);
+                }}
+              >
+                <div className='relative'>
+                  <Avatar className='h-12 w-12 overflow-hidden mr-3'>
+                    {/* <AvatarImage src={user.avatar} alt={user.name} />
+                      <AvatarFallback>{user.name.charAt(0)}</AvatarFallback> */}
+                    <img
+                      src={
+                        user.profile_image ||
+                        `https://ui-avatars.com/api/?name=${user.full_name}`
+                      }
+                      alt={user.name}
+                      className='h-full w-full object-cover'
+                    />
+                  </Avatar>
+                  {/* {user.online && (
+                      <span className='absolute bottom-0 right-2 h-3 w-3 rounded-full bg-green-500 border-2 border-background'></span>
+                    )} */}
+                </div>
+                <div className='flex-1 min-w-0'>
+                  <div className='flex justify-between items-baseline'>
+                    <h3 className='font-medium truncate'>{user.full_name}</h3>
+                    {/* <span className='text-xs whitespace-nowrap ml-2'>
+                        {user.lastSeen}
+                      </span> */}
+                  </div>
+                  <p className='text-sm  truncate'>{user.email}</p>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
@@ -324,18 +382,26 @@ function Chat() {
             >
               <Menu size={20} />
             </button>
-            <Avatar className='h-10 w-10 mr-3'>
-              <AvatarImage src={selectedUser.avatar} alt={selectedUser.name} />
-              <AvatarFallback>{selectedUser.name.charAt(0)}</AvatarFallback>
+            <Avatar className='h-10 w-10 overflow-hidden mr-3'>
+              {/* <AvatarImage src={selectedUser.avatar} alt={selectedUser.name} />
+              <AvatarFallback>{selectedUser.name.charAt(0)}</AvatarFallback> */}
+              <img
+                src={
+                  selectedUser.profile_image ||
+                  `https://ui-avatars.com/api/?name=${selectedUser.full_name}`
+                }
+                alt={selectedUser.full_name}
+                className='h-full w-full object-cover'
+              />
             </Avatar>
             <div>
               <h2 className='font-semibold flex items-center'>
-                {selectedUser.name}
-                {selectedUser.online && (
+                {selectedUser.full_name}
+                {/* {selectedUser.online && (
                   <span className='ml-2 text-xs text-green-500 font-normal'>
                     ● Online
                   </span>
-                )}
+                )} */}
               </h2>
               <p className='text-xs text-muted-foreground'>
                 {selectedUser.email}
@@ -357,7 +423,46 @@ function Chat() {
 
         {/* Messages area */}
         <div className='flex-1 overflow-y-auto p-4 bg-accent/20'>
-          <div className='space-y-4'>
+          {messageList.length > 0 ? (
+            <div className='space-y-4'>
+              {messageList.map((message) => (
+                <div
+                  key={message.id}
+                  className={cn(
+                    'flex',
+                    message.sent ? 'justify-end' : 'justify-start'
+                  )}
+                >
+                  <div
+                    className={cn(
+                      'max-w-[75%] rounded-lg px-4 py-2 shadow-sm',
+                      message.sent
+                        ? 'bg-primary text-primary-foreground rounded-br-none'
+                        : 'bg-card rounded-bl-none'
+                    )}
+                  >
+                    <p>{message.text}</p>
+                    <p
+                      className={cn(
+                        'text-xs mt-1',
+                        message.sent
+                          ? 'text-primary-foreground/70'
+                          : 'text-muted-foreground'
+                      )}
+                    >
+                      {dayjs(message.date).format('DD MMM, YYYY')} -{' '}
+                      {message.timestamp}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className='flex items-center justify-center h-full'>
+              <p className='text-muted-foreground'>No messages yet.</p>
+            </div>
+          )}
+          {/* <div className='space-y-4'>
             {messages[selectedUser.id as keyof typeof messages]?.map(
               (message) => (
                 <div
@@ -391,7 +496,7 @@ function Chat() {
               )
             )}
             <div ref={messagesEndRef} />
-          </div>
+          </div> */}
         </div>
 
         {/* Message input */}
