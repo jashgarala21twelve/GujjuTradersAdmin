@@ -8,11 +8,12 @@ import {
 import { useNavigate } from 'react-router-dom';
 import Toast from '@/components/toast/commonToast';
 
-export const useLoginMutation = onSuccessHandler => {
+export const useLoginMutation = (onSuccessHandler) => {
   return useMutation({
     mutationFn: loginApi,
-    onSuccess: data => {
-      console.log(data, 'data');
+    onSuccess: (data) => {
+      sessionStorage.setItem('userEmail', data?.data?.email);
+
       if (!data?.success) {
         Toast(
           'destructive',

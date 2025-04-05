@@ -176,6 +176,9 @@ function Chat() {
   const [showSidebar, setShowSidebar] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const userEmailId = sessionStorage.getItem('userEmail');
+  const userName = userEmailId?.split('@')[0];
+
   // Filter users based on search term
   const filteredUsers = users.filter(
     (user) =>
@@ -250,9 +253,9 @@ function Chat() {
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h2 className='font-semibold'>Your Name</h2>
+                <h2 className='font-semibold'>{userName}</h2>
                 <p className='text-xs text-muted-foreground'>
-                  your.email@example.com
+                  {userEmailId}
                 </p>
               </div>
             </div>
@@ -339,7 +342,7 @@ function Chat() {
               </p>
             </div>
           </div>
-          <div className='flex items-center space-x-2'>
+          {/* <div className='flex items-center space-x-2'>
             <Button variant='ghost' size='icon' className='rounded-full'>
               <Phone size={18} />
             </Button>
@@ -349,7 +352,7 @@ function Chat() {
             <Button variant='ghost' size='icon' className='rounded-full'>
               <MoreVertical size={18} />
             </Button>
-          </div>
+          </div> */}
         </div>
 
         {/* Messages area */}
