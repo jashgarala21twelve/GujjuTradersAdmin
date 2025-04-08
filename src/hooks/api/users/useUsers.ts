@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { activeInactiveUser, getUsersApi } from '@/api/users'; // Adjust the import path as needed
+import { activeInactiveUser, getAllUsersApi, getUsersApi } from '@/api/users'; // Adjust the import path as needed
 
 const USERS_QUERY_KEY = ['users'];
 
@@ -18,5 +18,13 @@ export const activeInactiveUserHook = (onSuccessHandler) => {
     onSuccess: (data) => {
       onSuccessHandler(data);
     },
+  });
+};
+
+export const useAllUsers = (params: Record<string, any>) => {
+  return useQuery({
+    queryKey: [...USERS_QUERY_KEY, params], // Ensures query re-fetches when params change
+    queryFn: () => getAllUsersApi(params), // Calls API function
+    staleTime: 5 * 60 * 1000, // Cache data for 5 minutes
   });
 };

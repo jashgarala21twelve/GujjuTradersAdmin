@@ -3,17 +3,32 @@
 import type React from 'react';
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, Search, Menu } from 'lucide-react';
+import { Send, Search, Menu, Spline, LoaderCircle } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import GujjuTraderLogo from '../../assets/gujjutradetslogo.png';
 import app from '@/firebaseConfig';
-import { getDatabase, ref, set, push, get } from 'firebase/database';
+import {
+  getDatabase,
+  ref,
+  set,
+  push,
+  get,
+  onChildAdded,
+} from 'firebase/database';
 import Toast from '@/components/toast/commonToast';
 import dayjs from 'dayjs';
-import { useUsers } from '@/hooks/api/users/useUsers';
+import { useAllUsers, useUsers } from '@/hooks/api/users/useUsers';
+import {
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from 'firebase/storage';
+import { ref as dbRef } from 'firebase/database';
+import { useNavigate } from 'react-router-dom';
 // Sample data - replace with your actual data source
 const users = [
   {
@@ -175,25 +190,48 @@ function Chat() {
   const [messageList, setMessageList] = useState<any[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<number>(1);
   const [updateMessageList, setUpdateMessageList] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [chatUserList, setChatUserList] = useState<string[]>([]);
+  const [sendImage, setSendImage] = useState<boolean>(false);
 
   const userEmailId = sessionStorage.getItem('userEmail');
   const userName = userEmailId?.split('@')[0];
+  const senderId = sessionStorage.getItem('user_id');
 
-  const { data, isLoading } = useUsers({});
+  const { data, isLoading } = useAllUsers({
+    search: searchTerm,
+  });
 
   useEffect(() => {
-    if (data?.data?.userList) {
-      setUserData(data?.data?.userList);
-      setSelectedUser(data?.data?.userList[0]);
+    if (data?.data) {
+      if (!searchTerm) {
+        setUserData(
+          data?.data.filter((user: any) => {
+            return chatUserList.includes(user._id);
+          })
+        );
+        setSelectedUser(
+          data?.data.filter((user: any) => {
+            return chatUserList.includes(user._id);
+          })[0]
+        );
+      } else {
+        setUserData(data?.data);
+        setSelectedUser(data?.data[0]);
+      }
     }
-  }, [data?.data?.userList]);
+  }, [data?.data]);
+
 
   // Filter users based on search term
-  const filteredUsers = userData?.filter(
-    (user: any) =>
-      user.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredUsers = userData?.filter((user: any) => {
+  //   user.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     user.email.toLowerCase().includes(searchTerm.toLowerCase());
+  // });
+
+  // console.log("Filtered Users:>>", filteredUsers);
 
   // const filteredUsers = userData?.filter((user)=>{
   //   console.log("USER:>>", user);
@@ -206,58 +244,163 @@ function Chat() {
   }, [messages, selectedUser]);
 
   // Handle sending a new message
-  const handleSendMessage = () => {
-    if (newMessage.trim() === '') return;
+  // const handleSendMessage = async () => {
+  //   if (newMessage.trim() === '') return;
 
-    const updatedMessages = {
-      ...messages,
-      [selectedUser._id]: [
-        ...(messages[selectedUser._id as keyof typeof messages] || []),
-        {
-          id: Date.now(),
-          text: newMessage,
+  //   let imageUrl = null;
 
-          sent: true,
-          timestamp: new Date().toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          }),
-        },
-      ],
-    };
+  //   if (selectedImage) {
+  //     const storage = getStorage();
+  //     const imageRef = storageRef(
+  //       storage,
+  //       `chatImages/${Date.now()}-${selectedImage.name}`
+  //     );
+  //     await uploadBytes(imageRef, selectedImage);
+  //     imageUrl = await getDownloadURL(imageRef);
+  //   }
 
-    setMessages(updatedMessages);
-    setNewMessage('');
+  //   // const updatedMessages = {
+  //   //   ...messages,
+  //   //   [selectedUser._id]: [
+  //   //     ...(messages[selectedUser._id as keyof typeof messages] || []),
+  //   //     {
+  //   //       id: Date.now(),
+  //   //       receiverId: selectedUserId,
+  //   //       senderId: senderId,
+  //   //       senderName: userName,
+  //   //       imageUrl: imageUrl || null,
+  //   //       text: newMessage,
+  //   //       timestamp: new Date().toLocaleTimeString([], {
+  //   //         hour: '2-digit',
+  //   //         minute: '2-digit',
+  //   //       }),
+  //   //     },
+  //   //   ],
+  //   // };
+
+  //   // setMessages(updatedMessages);
+  //   setNewMessage('');
+
+  //   const db = getDatabase(app);
+  //   const messagesRef = ref(db, 'chatAdminToUser/' + selectedUserId);
+  //   set(push(messagesRef), {
+  //     receiverId: selectedUserId,
+  //     senderId: senderId,
+  //     senderName: userName,
+  //     imageUrl: imageUrl,
+  //     text: newMessage,
+  //     timestamp: new Date().getTime(),
+  //   })
+  //     .then(() => {
+  //       Toast('success', 'Message sent successfully');
+  //     })
+  //     .catch((error) => {
+  //       Toast('info', error.message || 'Failed to send message');
+  //     });
+
+  //   setUpdateMessageList(!updateMessageList);
+  //   setNewMessage('');
+  //   setSelectedImage(null);
+  //   setPreviewUrl(null);
+  // };
+
+  const route = useNavigate();
+
+  const handleSendMessage = async () => {
+    if (newMessage.trim() === '' && !selectedImage) return;
+
+    let imageUrl = null;
+
+    setSendImage(true);
+
+    if (selectedImage) {
+      try {
+        const storage = getStorage();
+        const imageRef = storageRef(
+          storage,
+          `chatImages/${Date.now()}-${selectedImage.name}`
+        );
+        await uploadBytes(imageRef, selectedImage);
+        imageUrl = await getDownloadURL(imageRef);
+        setSendImage(false);
+      } catch (error) {
+        setSendImage(false);
+        Toast('info', 'Image upload failed');
+        return;
+      }
+    }
 
     const db = getDatabase(app);
-    const messagesRef = ref(db, 'messages/' + selectedUserId);
-    set(push(messagesRef), {
-      id: selectedUserId,
-      text: newMessage,
-      sent: true,
-      date: new Date().toLocaleDateString(),
-      timestamp: new Date().toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-    })
-      .then(() => {
-        Toast('success', 'Message sent successfully');
-      })
-      .catch((error) => {
-        Toast('info', error.message || 'Failed to send message');
-      });
+    const messagesRef = ref(db, 'chatAdminToUser/' + selectedUserId);
+    const newMessageRef = push(messagesRef); // Correct way to push
+
+    const messageData = {
+      receiverId: selectedUserId,
+      senderId: senderId,
+      senderName: userName,
+      imageUrl: imageUrl || null,
+      text: newMessage || '',
+      timestamp: Date.now(),
+    };
+
+    try {
+      setSendImage(false);
+      await set(newMessageRef, messageData);
+    } catch (error: any) {
+      Toast('info', error.message || 'Failed to send message');
+    }
 
     setUpdateMessageList(!updateMessageList);
+    setNewMessage('');
+    setSelectedImage(null);
+    setPreviewUrl(null);
   };
+
+  useEffect(() => {
+    const db = getDatabase(app);
+
+    const chatRef = ref(db, 'chatAdminToUser/' + selectedUserId);
+
+    const unsubscribe = onChildAdded(chatRef, (snapshot) => {
+      const message = snapshot.val();
+      if (message) {
+        setMessageList((prevMessages) => [...prevMessages, message]);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [selectedUserId]);
 
   useEffect(() => {
     handleGetMessages();
   }, [selectedUserId, updateMessageList]);
 
+  const getChatUserList = async () => {
+    const db = getDatabase(app);
+    try {
+      const data = await get(ref(db, 'chatAdminToUser'));
+
+      if (!data.exists()) {
+        setChatUserList([]);
+      } else {
+        const result = data.val();
+        const userList = Object.keys(result); // returns ['userId1', 'userId2', ...]
+        setChatUserList(userList);
+      }
+    } catch (error) {
+    }
+  };
+
+  useEffect(() => {
+    getChatUserList();
+  }, []);
+
   const handleGetMessages = async () => {
     const db = getDatabase(app);
-    const messagesRef = ref(db, 'messages/' + selectedUserId);
+
+    const messagesRef = ref(db, 'chatAdminToUser/' + selectedUserId);
     const messagesList = await get(messagesRef);
     if (messagesList.exists()) {
       setMessageList(Object.values(messagesList.val()));
@@ -273,6 +416,40 @@ function Chat() {
       handleSendMessage();
     }
   };
+
+  // const handleSendMessage = async () => {
+  //   if (!newMessage.trim() && !selectedImage) return;
+
+  //   const db = getDatabase();
+  //   const messageRef = dbRef(db, `chatAdminToUser/${selectedUserId}`);
+  //   await push(messageRef, {
+  //     senderId,
+  //     receiverId: selectedUserId,
+  //     message: newMessage || '',
+  //     image: imageUrl,
+  //     date: Date.now(),
+  //   });
+
+  //   // Reset states
+  //   setNewMessage('');
+  //   setSelectedImage(null);
+  //   setPreviewUrl(null);
+  // };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedImage(file);
+      setPreviewUrl(URL.createObjectURL(file)); // For showing preview
+    }
+  };
+  const endOfMessagesRef = useRef(null);
+  const scrollToBottom = () => {
+    endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+  useEffect(() => {
+    scrollToBottom();
+  }, [messageList]);
 
   return (
     <div className='flex h-full bg-background'>
@@ -321,7 +498,7 @@ function Chat() {
               <p className='text-muted-foreground'>Loading users...</p>
             </div>
           ) : (
-            filteredUsers?.map((user: any) => (
+            userData?.map((user: any) => (
               <div
                 key={user._id}
                 className={cn(
@@ -335,7 +512,10 @@ function Chat() {
                 }}
               >
                 <div className='relative'>
-                  <Avatar className='h-12 w-12 overflow-hidden mr-3'>
+                  <Avatar
+                    className='h-12 w-12 overflow-hidden mr-3'
+                    onClick={() => route(`/users/${user._id}`)}
+                  >
                     {/* <AvatarImage src={user.avatar} alt={user.name} />
                       <AvatarFallback>{user.name.charAt(0)}</AvatarFallback> */}
                     <img
@@ -430,78 +610,90 @@ function Chat() {
                   key={message.id}
                   className={cn(
                     'flex',
-                    message.sent ? 'justify-end' : 'justify-start'
+                    message.receiverId === senderId
+                      ? 'justify-start'
+                      : 'justify-end'
                   )}
                 >
                   <div
                     className={cn(
                       'max-w-[75%] rounded-lg px-4 py-2 shadow-sm',
-                      message.sent
-                        ? 'bg-primary text-primary-foreground rounded-br-none'
-                        : 'bg-card rounded-bl-none'
+                      message.receiverId === senderId
+                        ? 'bg-card rounded-bl-none'
+                        : 'bg-primary text-primary-foreground rounded-br-none'
                     )}
                   >
-                    <p>{message.text}</p>
+                    <p>
+                      {message.text === '' ? (
+                        <>
+                          <img
+                            className='h-[100px] object-cover'
+                            src={message.imageUrl}
+                            alt='preview'
+                            onClick={() => setPreviewImage(message.imageUrl)}
+                          />
+                        </>
+                      ) : (
+                        message.text
+                      )}
+                    </p>
+                    {previewImage && (
+                      <div
+                        className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70'
+                        onClick={() => setPreviewImage(null)} // close on background click
+                      >
+                        <img
+                          src={previewImage}
+                          alt='Full Preview'
+                          className='max-w-full max-h-full rounded shadow-lg'
+                        />
+                      </div>
+                    )}
                     <p
                       className={cn(
                         'text-xs mt-1',
-                        message.sent
-                          ? 'text-primary-foreground/70'
-                          : 'text-muted-foreground'
+                        message.receiverId === senderId
+                          ? 'text-muted-foreground'
+                          : 'text-primary-foreground/70'
                       )}
                     >
-                      {dayjs(message.date).format('DD MMM, YYYY')} -{' '}
-                      {message.timestamp}
+                      {new Date(message.timestamp).toLocaleString()}
                     </p>
                   </div>
                 </div>
               ))}
+              <div ref={endOfMessagesRef} />
             </div>
           ) : (
             <div className='flex items-center justify-center h-full'>
               <p className='text-muted-foreground'>No messages yet.</p>
             </div>
           )}
-          {/* <div className='space-y-4'>
-            {messages[selectedUser.id as keyof typeof messages]?.map(
-              (message) => (
-                <div
-                  key={message.id}
-                  className={cn(
-                    'flex',
-                    message.sent ? 'justify-end' : 'justify-start'
-                  )}
-                >
-                  <div
-                    className={cn(
-                      'max-w-[75%] rounded-lg px-4 py-2 shadow-sm',
-                      message.sent
-                        ? 'bg-primary text-primary-foreground rounded-br-none'
-                        : 'bg-card rounded-bl-none'
-                    )}
-                  >
-                    <p>{message.text}</p>
-                    <p
-                      className={cn(
-                        'text-xs mt-1',
-                        message.sent
-                          ? 'text-primary-foreground/70'
-                          : 'text-muted-foreground'
-                      )}
-                    >
-                      {message.timestamp}
-                    </p>
-                  </div>
-                </div>
-              )
-            )}
-            <div ref={messagesEndRef} />
-          </div> */}
         </div>
 
         {/* Message input */}
         <div className='p-4 border-t bg-card'>
           <div className='flex items-center space-x-2'>
+            <label className='cursor-pointer'>
+              <input
+                type='file'
+                accept='image/*'
+                onChange={handleImageChange}
+                hidden
+              />
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                fill='#2D9D90'
+                width='30px'
+                height='30px'
+                viewBox='0 0 32 32'
+                version='1.1'
+              >
+                <title>clip</title>
+                <path d='M5.469 16.688l8.75-8.75c0.094-0.094 0.844-0.844 2.031-1.25 1.656-0.531 3.344-0.094 4.688 1.25 1.375 1.344 1.781 3 1.25 4.656-0.375 1.188-1.156 2-1.25 2.094l-9.406 9.406c-1.625 1.625-5.688 3.719-9.438 0-3.719-3.719-1.594-7.813 0-9.406l10.094-10.125c0.375-0.375 0.969-0.375 1.344 0s0.375 0.969 0 1.344l-10.063 10.125c-0.156 0.125-3.313 3.406 0 6.719 3.219 3.219 6.375 0.344 6.719 0l9.406-9.438s0.531-0.531 0.781-1.281c0.313-1 0.094-1.875-0.781-2.75-1.875-1.875-3.688-0.313-4.031 0l-8.75 8.719c-0.313 0.313-0.531 0.844 0 1.375s1.031 0.281 1.344 0l6.063-6.063c0.375-0.344 1-0.344 1.344 0 0.375 0.375 0.375 1 0 1.375l-6.063 6.031c-0.844 0.813-2.563 1.469-4.031 0-1.5-1.469-0.844-3.219 0-4.031z' />
+              </svg>
+            </label>
+
             <Input
               className='flex-1'
               placeholder='Type a message...'
@@ -509,14 +701,36 @@ function Chat() {
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyDown={handleKeyPress}
             />
-            <Button
-              onClick={handleSendMessage}
-              disabled={newMessage.trim() === ''}
-              size='icon'
-            >
-              <Send size={18} />
-            </Button>
+
+            {sendImage ? (
+              <Button
+                onClick={handleSendMessage}
+                disabled={sendImage}
+                size='icon'
+              >
+                <LoaderCircle size={18} className='animate-spin' />
+              </Button>
+            ) : (
+              <Button
+                onClick={handleSendMessage}
+                disabled={!newMessage.trim() && !selectedImage}
+                size='icon'
+              >
+                <Send size={18} />
+              </Button>
+            )}
           </div>
+
+          {/* Show preview if image is selected */}
+          {previewUrl && (
+            <div className='mt-2'>
+              <img
+                src={previewUrl}
+                alt='Preview'
+                className='max-h-32 rounded-md'
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
