@@ -1,14 +1,14 @@
 import { initializeApp } from 'firebase/app';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyBDaayweh4TTYGpbKNBpDGxLWIZleCZ8g0',
-  authDomain: 'gujju-chat-23454.firebaseapp.com',
-  databaseURL:
-    'https://gujju-chat-23454-default-rtdb.asia-southeast1.firebasedatabase.app',
-  projectId: 'gujju-chat-23454',
-  storageBucket: 'gujju-chat-23454.firebasestorage.app',
-  messagingSenderId: '510829144839',
-  appId: '1:510829144839:web:3d6f3f73c6d5428b0b73a2',
+  apiKey: 'AIzaSyCfnV1ahzhp3fsvITzK598mJwBLWtomkGM',
+  authDomain: 'gujjutraders-98b55.firebaseapp.com',
+  databaseURL: 'https://gujjutraders-98b55-default-rtdb.firebaseio.com/',
+  projectId: 'gujjutraders-98b55',
+  storageBucket: 'gujjutraders-98b55.firebasestorage.app',
+  messagingSenderId: '958864494595',
+  appId: '1:958864494595:web:bd0937f9679fa6eea7fe36',
+  measurementId: 'G-N7T26XX44Q',
 };
 
 const app = initializeApp(firebaseConfig);
